@@ -88,6 +88,7 @@ onMounted(() => {
 
 const rezervacije = ref([
   {
+    dan: 23,
     startHour: '9:00',
     finishingHour: '10:30',
     color: '#dc2626',
@@ -103,11 +104,32 @@ const rezervacije = ref([
     color: '#dc2626',
   },
 ])
+
+const allReservations = ref(false)
+const hideReservationsRef = ref()
+
+const showAllReservations = () => {
+  allReservations.value = !allReservations.value
+}
+
+const hideReservations = () => {
+  if (!hideReservationsRef.value) return
+  hideReservationsRef.value.classList.add(
+    '!opacity-0',
+    'transform',
+    'translate-x-[100px]',
+    'transition-all',
+    'duration-200',
+  )
+  setTimeout(() => {
+    showAllReservations()
+  }, 200)
+}
 </script>
 
 <template>
   <main>
-    <div>
+    <div class="relative">
       <VDatePicker
         v-model="date"
         mode="date"
@@ -117,19 +139,46 @@ const rezervacije = ref([
         @update:model-value="handleDateChange"
       >
         <template #footer>
-          <div class="max-w-[300px] px-4 border-t flex flex-col border-[rgba(0,0,0,0.2)]">
-            <div class="w-full h-full flex flex-col">
-              <h3 class="text-black text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
-              <p class="font-semibold text-lg">{{ formattedWeekday }}</p>
+          <div class="w-full h-full relative">
+            <div class="max-w-[300px] px-4 border-t flex flex-col border-[rgba(0,0,0,0.2)]">
+              <div class="w-full h-full flex flex-col">
+                <h3 class="text-[#484848] text-xl font-bold">
+                  {{ formattedDay }}. {{ formattedMonth }}
+                </h3>
+                <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
+              </div>
+              <div class="w-full flex justify-between pt-4">
+                <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
+                <button class="underline cursor-pointer" @click="showAllReservations">
+                  Svi termini
+                </button>
+              </div>
+              <DraggableScroll :rezervacije="rezervacije" />
             </div>
-            <div class="w-full flex justify-between pt-4">
-              <p>{{ brojMusterija }} mušterija</p>
-              <button class="underline cursor-pointer">Svi termini</button>
-            </div>
-            <DraggableScroll :rezervacije="rezervacije" />
           </div>
         </template>
       </VDatePicker>
+      <div
+        ref="hideReservationsRef"
+        v-if="allReservations"
+        class="absolute top-0 left-0 w-full h-full flex flex-col bg-white z-10 rounded-md"
+        v-motion="'transition'"
+        :initial="{ opacity: 0, translateX: 100 }"
+        :enter="{ opacity: 1, translateX: 0 }"
+        :leave="{ opacity: 0, translateX: 100 }"
+        :duration="200"
+      >
+        <button class="p-4 cursor-pointer" @click="hideReservations">
+          <img src="../assets/arrow-left.png" alt="" />
+        </button>
+        <div class="w-full h-full flex flex-col p-4">
+          <h3 class="text-[#484848] text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
+          <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
+        </div>
+        <div class="flex flex-col gap-2">
+          <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
+        </div>
+      </div>
     </div>
   </main>
 </template>
