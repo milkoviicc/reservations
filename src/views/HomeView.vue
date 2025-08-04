@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import DraggableScroll from '@/components/DraggableScroll.vue'
+import ScrollableContainer from '@/components/ScrollableContainer.vue'
+import { EllipsisVertical } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 const date = ref(new Date())
 
@@ -88,22 +89,54 @@ onMounted(() => {
 
 const rezervacije = ref([
   {
-    dan: 23,
-    startHour: '9:00',
-    finishingHour: '10:30',
-    color: '#dc2626',
+    startHour: '13:30',
+    finishingHour: '14:30',
+    price: 30,
+    type: 'Pedikura',
+    name: 'Marija',
   },
   {
-    startHour: '10:30',
-    finishingHour: '12:45',
-    color: '#00FF00',
+    startHour: '15:00',
+    finishingHour: '15:30',
+    price: 50,
+    type: 'Depilacija',
+    name: 'Ema',
   },
   {
-    startHour: '12:45',
-    finishingHour: '14:00',
-    color: '#dc2626',
+    startHour: '15:30',
+    finishingHour: '16:30',
+    price: 25,
+    type: 'Trajni lak',
+    name: 'Lucija',
+  },
+  {
+    startHour: '17:30',
+    finishingHour: '18:30',
+    price: 40,
+    type: 'Depilacija',
+    name: 'Ivana',
+  },
+  {
+    startHour: '18:30',
+    finishingHour: '19:00',
+    price: 25,
+    type: 'Trajni lak',
+    name: 'Emanuela',
   },
 ])
+
+function parseHour(hourStr: string): number {
+  const [h, m] = hourStr.split(':').map(Number)
+  return h + m / 60
+}
+
+const rezItem = (hour: number) => {
+  return rezervacije.value.find((item) => {
+    const start = parseHour(item.startHour)
+    const end = parseHour(item.finishingHour)
+    return hour >= start && hour < end
+  })
+}
 
 const allReservations = ref(false)
 const hideReservationsRef = ref()
@@ -129,17 +162,18 @@ const hideReservations = () => {
 
 <template>
   <main>
-    <div class="relative">
+    <div class="relative max-h-fit">
       <VDatePicker
         v-model="date"
         mode="date"
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
+        class="flex flex-col flex-1 h-full py-12"
         @update:model-value="handleDateChange"
       >
         <template #footer>
-          <div class="w-full h-full relative">
+          <div class="w-full h-full max-h-[400px] relative">
             <div class="max-w-[300px] px-4 border-t flex flex-col border-[rgba(0,0,0,0.2)]">
               <div class="w-full h-full flex flex-col">
                 <h3 class="text-[#484848] text-xl font-bold">
@@ -153,7 +187,27 @@ const hideReservations = () => {
                   Svi termini
                 </button>
               </div>
-              <DraggableScroll :rezervacije="rezervacije" />
+              <ScrollableContainer>
+                <div
+                  v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
+                  :key="hour"
+                  class="min-w-[60px] px-[1px] py-1 bg-gray-100 rounded text-center text-sm font-medium flex flex-col items-center"
+                >
+                  {{ hour.toString().padStart(2, '0') }}:00
+                  <div
+                    v-if="rezItem(hour)"
+                    class="w-full h-8 rounded mt-2 relative group bg-[#DC2626]"
+                  >
+                    <span
+                      class="absolute left-1/2 -translate-x-1/2 -top-7 bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                    >
+                      {{ rezItem(hour)?.startHour }} - {{ rezItem(hour)?.finishingHour }}
+                    </span>
+                  </div>
+
+                  <div v-else class="w-full h-8 rounded mt-2 bg-green-500"></div>
+                </div>
+              </ScrollableContainer>
             </div>
           </div>
         </template>
@@ -161,22 +215,44 @@ const hideReservations = () => {
       <div
         ref="hideReservationsRef"
         v-if="allReservations"
-        class="absolute top-0 left-0 w-full h-full flex flex-col bg-white z-10 rounded-md"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md py-4"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <button class="p-4 cursor-pointer" @click="hideReservations">
+        <button class="px-4 py-2 cursor-pointer" @click="hideReservations">
           <img src="../assets/arrow-left.png" alt="" />
         </button>
-        <div class="w-full h-full flex flex-col p-4">
+        <div class="w-full h-fit flex flex-col px-4 py-2">
           <h3 class="text-[#484848] text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
           <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
         </div>
-        <div class="flex flex-col gap-2">
-          <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
+        <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
+          <p class="text-[#484848] px-4">{{ brojMusterija }} mušterija</p>
+          <ScrollableContainer class="flex-col px-4 py-1">
+            <div v-for="(rezervacija, index) in rezervacije" :key="index">
+              <div
+                class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
+              >
+                <div class="flex flex-col gap-[2px]">
+                  <h1 class="text-black font-medium text-[13px]">
+                    {{ rezervacija.type }} {{ rezervacija.name }} ( {{ rezervacija.price }} eura)
+                  </h1>
+                  <div class="flex gap-2 items-center">
+                    <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>
+                    <p class="text-[#454545] text-[11px] font-medium">
+                      {{ rezervacija.startHour }} - {{ rezervacija.finishingHour }}
+                    </p>
+                  </div>
+                </div>
+                <button class="cursor-pointer">
+                  <EllipsisVertical :size="24" class="text-[#444]" />
+                </button>
+              </div>
+            </div>
+          </ScrollableContainer>
         </div>
       </div>
     </div>
