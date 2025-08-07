@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CreateReservation from '@/components/CreateReservation.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import { EllipsisVertical } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
@@ -158,10 +159,17 @@ const hideReservations = () => {
     showAllReservations()
   }, 200)
 }
+
+const createReservationRef = ref<HTMLElement | null>(null)
+const createReservationsOpened = ref(false)
+
+const handleCreateReservations = () => {
+  createReservationsOpened.value = !createReservationsOpened.value
+}
 </script>
 
 <template>
-  <main>
+  <main class="w-fit h-fit">
     <div class="relative max-h-fit">
       <VDatePicker
         v-model="date"
@@ -169,11 +177,11 @@ const hideReservations = () => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex flex-col flex-1 h-full py-12"
+        class="flex flex-col flex-1 h-full pt-12"
         @update:model-value="handleDateChange"
       >
         <template #footer>
-          <div class="w-full h-full max-h-[400px] relative">
+          <div class="w-full h-full max-h-[300px] relative">
             <div class="max-w-[300px] px-4 border-t flex flex-col border-[rgba(0,0,0,0.2)]">
               <div class="w-full h-full flex flex-col">
                 <h3 class="text-[#484848] text-xl font-bold">
@@ -191,7 +199,7 @@ const hideReservations = () => {
                 <div
                   v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
                   :key="hour"
-                  class="min-w-[60px] px-[1px] py-1 bg-gray-100 rounded text-center text-sm font-medium flex flex-col items-center"
+                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t-[1px] border-b-[1px] text-center text-sm font-medium flex flex-col items-center"
                 >
                   {{ hour.toString().padStart(2, '0') }}:00
                   <div
@@ -209,6 +217,18 @@ const hideReservations = () => {
                 </div>
               </ScrollableContainer>
             </div>
+            <div class="flex items-end justify-center h-full pt-8 pb-4">
+              <button
+                class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
+                @click="handleCreateReservations()"
+              >
+                <span
+                  class="absolute -top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-semibold"
+                >
+                  +
+                </span>
+              </button>
+            </div>
           </div>
         </template>
       </VDatePicker>
@@ -223,7 +243,7 @@ const hideReservations = () => {
         :duration="200"
       >
         <button class="px-4 py-2 cursor-pointer" @click="hideReservations">
-          <img src="../assets/arrow-left.png" alt="" />
+          <img src="../assets/arrow-left.png" alt="" width="20" />
         </button>
         <div class="w-full h-fit flex flex-col px-4 py-2">
           <h3 class="text-[#484848] text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
@@ -254,6 +274,34 @@ const hideReservations = () => {
             </div>
           </ScrollableContainer>
         </div>
+        <div class="flex items-end justify-center h-fit pt-8">
+          <button
+            class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
+            @click="handleCreateReservations()"
+          >
+            <span
+              class="absolute -top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+            >
+              +
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref="createReservationRef"
+        v-if="createReservationsOpened"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full"
+        v-motion="'transition'"
+        :initial="{ opacity: 0, translateX: 100 }"
+        :enter="{ opacity: 1, translateX: 0 }"
+        :leave="{ opacity: 0, translateX: 100 }"
+        :duration="200"
+      >
+        <CreateReservation
+          :createReservationRef="createReservationRef"
+          :handleCreateReservations="handleCreateReservations"
+        />
       </div>
     </div>
   </main>
