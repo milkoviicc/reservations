@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Appointment } from '@/lib/types'
 import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
@@ -6,12 +7,12 @@ const date = ref(new Date())
 import { defineProps } from 'vue'
 
 const props = defineProps<{
-  updateReservationId: number | null
+  appointment: Appointment | undefined
   updateReservationRef: HTMLElement | null
-  handleUpdateReservation: (id: number | null) => void
+  handleUpdateReservation: (appointment: Appointment) => void
 }>()
 
-const updateReservationId = ref<number | null>(props.updateReservationId)
+const appointment = ref<Appointment | undefined>(props.appointment)
 const updateReservationRef = ref<HTMLElement | null>(props.updateReservationRef)
 const handleUpdateReservation = props.handleUpdateReservation
 
@@ -23,49 +24,18 @@ watch(
 )
 
 const selectedColor = ref('red')
-const formattedDay = ref<number | null>(null)
-const formattedMonth = ref('')
-const formattedWeekday = ref('')
-
-const getFormattedDateParts = (date: Date) => {
-  const day = date.getDate() // e.g., 15
-
-  const month = date.toLocaleDateString('hr-HR', {
-    month: 'long',
-  })
-
-  const weekday = date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-  })
-
-  const uppercase = (str: string) => str.toUpperCase()
-
-  return {
-    day,
-    month: uppercase(month),
-    weekday: uppercase(weekday),
-  }
-}
 
 onMounted(() => {
   if (date.value) {
     handleDateChange(date.value)
   }
 })
+
+const newFormattedDate = ref()
 
 const handleDateChange = (newDate: Date) => {
-  const { day, month, weekday } = getFormattedDateParts(newDate)
-
-  formattedDay.value = day
-  formattedMonth.value = month
-  formattedWeekday.value = weekday
+  newFormattedDate.value = newDate.toISOString().split('T')[0]
 }
-
-onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
-  }
-})
 
 const hideCreateReservations = () => {
   if (!updateReservationRef.value) return
@@ -77,32 +47,39 @@ const hideCreateReservations = () => {
     'duration-200',
   )
   setTimeout(() => {
-    handleUpdateReservation(null)
+    if (appointment.value) {
+      handleUpdateReservation(appointment.value)
+    }
   }, 200)
 }
 
-/* const updateReservation = async () => {
-  try {
-    const res = await axios.put('http://91.99.227.117/api/appointments', {
-      appointmentId: updateReservationId,
-      clientFirstName: '',
-      clientLastName: '',
-      appointmentType: '',
-      date: new Date(),
-      startTime: '',
-      endTime: '',
-      cost: 0,
-    })
+const startingHour = ref()
+const startingMinutes = ref()
+const endingHour = ref()
+const endingMinutes = ref()
 
-    if (res.status === 200) {
-      console.log('appointment updated')
+const updateReservation = async () => {
+  if (appointment.value) {
+    try {
+      const res = await axios.put('http://91.99.227.117/api/appointments', {
+        appointmentId: appointment.value.appointmentId,
+        clientFirstName: appointment.value.clientFirstName,
+        clientLastName: appointment.value.clientLastName,
+        appointmentType: appointment.value.appointmentType,
+        date: date,
+        startTime: `${startingHour.value}-${startingMinutes.value}:00`,
+        endTime: `${endingHour.value}-${endingMinutes.value}:00`,
+        cost: appointment.value.cost,
+      })
+
+      if (res.status === 200) {
+        console.log('appointment updated')
+      }
+    } catch (error) {
+      console.error(error)
     }
-  } catch (error) {
-    console.error(error)
   }
 }
-
-*/
 </script>
 
 <template>
@@ -128,6 +105,7 @@ const hideCreateReservations = () => {
               <div class="flex px-2 pt-2 gap-[3px] w-full justify-center">
                 <div class="flex relative items-center">
                   <input
+                    v-model="startingHour"
                     type="number"
                     placeholder="00"
                     min="1"
@@ -139,6 +117,7 @@ const hideCreateReservations = () => {
                 <p class="text-6xl leading-8">:</p>
                 <div class="flex relative items-center">
                   <input
+                    v-model="startingMinutes"
                     type="number"
                     placeholder="00"
                     min="0"
@@ -150,6 +129,7 @@ const hideCreateReservations = () => {
                 <p class="text-6xl leading-8">-</p>
                 <div class="flex relative items-center">
                   <input
+                    v-model="endingHour"
                     type="number"
                     placeholder="00"
                     min="1"
@@ -161,6 +141,7 @@ const hideCreateReservations = () => {
                 <p class="text-6xl leading-8">:</p>
                 <div class="flex relative items-center">
                   <input
+                    v-model="endingMinutes"
                     type="number"
                     placeholder="00"
                     min="0"
@@ -171,7 +152,10 @@ const hideCreateReservations = () => {
                 </div>
               </div>
             </div>
-            <button class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer">
+            <button
+              class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer"
+              @click="updateReservation"
+            >
               Spremi promjene
             </button>
           </div>

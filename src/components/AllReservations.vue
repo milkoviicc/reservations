@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { EllipsisVertical } from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
 import { defineProps } from 'vue'
 import ScrollableContainer from './ScrollableContainer.vue'
@@ -8,133 +8,40 @@ import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
 import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
 import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
 import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
+import type { Appointment } from '@/lib/types'
 
 const props = defineProps<{
+  appointments: Appointment[]
+  data: {
+    day: number
+    month: string
+    weekday: string
+  }
   allReservationsRef: HTMLElement | null
   handleAllReservations: () => void
   handleCreateReservations: () => void
-  handleUpdateReservation: (id: number | null) => void
+  updateReservationOpened: boolean
+  handleUpdateReservation: (appointment: Appointment) => void
 }>()
 
+const appointments = ref(props.appointments)
+const data = props.data
 const allReservationsRef = ref<HTMLElement | null>(props.allReservationsRef)
 const handleAllReservations = props.handleAllReservations
 const handleCreateReservations = props.handleCreateReservations
+const updateReservationOpened = ref<boolean>(props.updateReservationOpened)
 const handleUpdateReservation = props.handleUpdateReservation
 
-const formattedDay = ref<number | null>(null)
-const formattedMonth = ref('')
-const formattedWeekday = ref('')
-
-const getFormattedDateParts = (date: Date) => {
-  const day = date.getDate() // e.g., 15
-
-  const month = date.toLocaleDateString('hr-HR', {
-    month: 'long',
-  })
-
-  const weekday = date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-  })
-
-  const uppercase = (str: string) => str.toUpperCase()
-
-  return {
-    day,
-    month: uppercase(month),
-    weekday: uppercase(weekday),
-  }
-}
-
-const musterije = ref([
-  {
-    datum: {
-      dan: 23,
-      mjesec: 'KOLOVOZ',
-      godina: 2025,
-    },
-    brojMusterija: 5,
+watch(
+  () => props.allReservationsRef,
+  (newVal) => {
+    allReservationsRef.value = newVal || null
   },
-  {
-    datum: {
-      dan: 15,
-      mjesec: 'LIPANJ',
-      godina: 2025,
-    },
-    brojMusterija: 2,
-  },
-  {
-    datum: {
-      dan: 10,
-      mjesec: 'KOLOVOZ',
-      godina: 2025,
-    },
-    brojMusterija: 10,
-  },
-])
+)
 
-const brojMusterija = ref(0)
-
-const updateBrojMusterija = (day: number, month: string, year: number) => {
-  const found = musterije.value.find(
-    (m) => m.datum.dan === day && m.datum.mjesec === month && m.datum.godina === year,
-  )
-  brojMusterija.value = found ? found.brojMusterija : 0
-}
-
-const date = ref(new Date())
-
-onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
-  }
-})
-
-const handleDateChange = (newDate: Date) => {
-  const { day, month, weekday } = getFormattedDateParts(newDate)
-
-  formattedDay.value = day
-  formattedMonth.value = month
-  formattedWeekday.value = weekday
-
-  updateBrojMusterija(day, month, newDate.getFullYear())
-}
-const rezervacije = ref([
-  {
-    startHour: '13:30',
-    finishingHour: '14:30',
-    price: 30,
-    type: 'Pedikura',
-    name: 'Marija',
-  },
-  {
-    startHour: '15:00',
-    finishingHour: '15:30',
-    price: 50,
-    type: 'Depilacija',
-    name: 'Ema',
-  },
-  {
-    startHour: '15:30',
-    finishingHour: '16:30',
-    price: 25,
-    type: 'Trajni lak',
-    name: 'Lucija',
-  },
-  {
-    startHour: '17:30',
-    finishingHour: '18:30',
-    price: 40,
-    type: 'Depilacija',
-    name: 'Ivana',
-  },
-  {
-    startHour: '18:30',
-    finishingHour: '19:00',
-    price: 25,
-    type: 'Trajni lak',
-    name: 'Emanuela',
-  },
-])
+const formattedDay = ref(data.day)
+const formattedMonth = ref(data.month)
+const formattedWeekday = ref(data.weekday)
 
 const hideReservations = () => {
   if (!allReservationsRef.value) return
@@ -150,9 +57,9 @@ const hideReservations = () => {
   }, 200)
 }
 
-const deleteReservation = async (id: number) => {
+const deleteReservation = async (appointmentId: string) => {
   try {
-    const res = await axios.delete(`http://91.99.227.117/api/appointments/${id}`)
+    const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
 
     if (res.status === 200) {
       console.log('appointment deleted')
@@ -162,8 +69,9 @@ const deleteReservation = async (id: number) => {
   }
 }
 
-const updateReservation = (id: number) => {
-  handleUpdateReservation(id)
+const updateReservation = (appointment: Appointment) => {
+  updateReservationOpened.value = !updateReservationOpened.value
+  handleUpdateReservation(appointment)
 }
 </script>
 
@@ -177,20 +85,21 @@ const updateReservation = (id: number) => {
       <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
     </div>
     <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
-      <p class="text-[#484848] px-4">{{ brojMusterija }} mušterija</p>
+      <p class="text-[#484848] px-4">{{ appointments.length }} mušterija</p>
       <ScrollableContainer class="flex-col px-4 py-1">
-        <div v-for="(rezervacija, index) in rezervacije" :key="index">
+        <div v-for="appointment in appointments" :key="appointment.appointmentId">
           <div
             class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
           >
             <div class="flex flex-col gap-[2px]">
               <h1 class="text-black font-medium text-[13px]">
-                {{ rezervacija.type }} {{ rezervacija.name }} ( {{ rezervacija.price }} eura)
+                {{ appointment.appointmentType }} {{ appointment.clientFirstName }} (
+                {{ appointment.cost }} eura)
               </h1>
               <div class="flex gap-2 items-center">
                 <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>
                 <p class="text-[#454545] text-[11px] font-medium">
-                  {{ rezervacija.startHour }} - {{ rezervacija.finishingHour }}
+                  {{ appointment.startTime }} - {{ appointment.endTime }}
                 </p>
               </div>
             </div>
@@ -199,10 +108,12 @@ const updateReservation = (id: number) => {
                 ><EllipsisVertical :size="24" class="text-[#444]"
               /></DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem @click="deleteReservation(index)" class="cursor-pointer"
+                <DropdownMenuItem
+                  @click="deleteReservation(appointment.appointmentId)"
+                  class="cursor-pointer"
                   >Obriši</DropdownMenuItem
                 >
-                <DropdownMenuItem @click="updateReservation(index)" class="cursor-pointer"
+                <DropdownMenuItem @click="updateReservation(appointment)" class="cursor-pointer"
                   >Ažuriraj</DropdownMenuItem
                 >
               </DropdownMenuContent>

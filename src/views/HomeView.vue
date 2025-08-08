@@ -3,11 +3,13 @@ import AllReservations from '@/components/AllReservations.vue'
 import CreateReservation from '@/components/CreateReservation.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateReservation from '@/components/UpdateReservation.vue'
+import type { Appointment } from '@/lib/types'
+import axios from 'axios'
 import { onMounted, ref } from 'vue'
-const date = ref(new Date())
 
+const date = ref(new Date())
 const selectedColor = ref('red')
-const formattedDay = ref<number | null>(null)
+const formattedDay = ref<number>(0)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
 
@@ -37,95 +39,32 @@ onMounted(() => {
   }
 })
 
-const musterije = ref([
-  {
-    datum: {
-      dan: 23,
-      mjesec: 'KOLOVOZ',
-      godina: 2025,
-    },
-    brojMusterija: 5,
-  },
-  {
-    datum: {
-      dan: 15,
-      mjesec: 'LIPANJ',
-      godina: 2025,
-    },
-    brojMusterija: 2,
-  },
-  {
-    datum: {
-      dan: 10,
-      mjesec: 'KOLOVOZ',
-      godina: 2025,
-    },
-    brojMusterija: 10,
-  },
-])
-
 const brojMusterija = ref(0)
 
-const updateBrojMusterija = (day: number, month: string, year: number) => {
-  const found = musterije.value.find(
-    (m) => m.datum.dan === day && m.datum.mjesec === month && m.datum.godina === year,
-  )
-  brojMusterija.value = found ? found.brojMusterija : 0
-}
-
-const handleDateChange = (newDate: Date) => {
+const handleDateChange = async (newDate: Date) => {
   const { day, month, weekday } = getFormattedDateParts(newDate)
 
   formattedDay.value = day
   formattedMonth.value = month
   formattedWeekday.value = weekday
 
-  updateBrojMusterija(day, month, newDate.getFullYear())
+  try {
+    const formattedDate = newDate.toISOString().split('T')[0]
+
+    const getAppointments = await axios.get(
+      `http://91.99.227.117/api/appointments/${formattedDate}`,
+    )
+
+    if (getAppointments.status === 200) {
+      appointments.value = getAppointments.data
+      brojMusterija.value = appointments.value.length
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
-  }
-})
-
-const rezervacije = ref([
-  {
-    startHour: '13:30',
-    finishingHour: '14:30',
-    price: 30,
-    type: 'Pedikura',
-    name: 'Marija',
-  },
-  {
-    startHour: '15:00',
-    finishingHour: '15:30',
-    price: 50,
-    type: 'Depilacija',
-    name: 'Ema',
-  },
-  {
-    startHour: '15:30',
-    finishingHour: '16:30',
-    price: 25,
-    type: 'Trajni lak',
-    name: 'Lucija',
-  },
-  {
-    startHour: '17:30',
-    finishingHour: '18:30',
-    price: 40,
-    type: 'Depilacija',
-    name: 'Ivana',
-  },
-  {
-    startHour: '18:30',
-    finishingHour: '19:00',
-    price: 25,
-    type: 'Trajni lak',
-    name: 'Emanuela',
-  },
-])
+const appointments = ref<Appointment[]>([])
 
 function parseHour(hourStr: string): number {
   const [h, m] = hourStr.split(':').map(Number)
@@ -133,36 +72,37 @@ function parseHour(hourStr: string): number {
 }
 
 const rezItem = (hour: number) => {
-  return rezervacije.value.find((item) => {
-    const start = parseHour(item.startHour)
-    const end = parseHour(item.finishingHour)
+  return appointments.value.find((item) => {
+    const start = parseHour(item.startTime)
+    const end = parseHour(item.endTime)
     return hour >= start && hour < end
   })
 }
 
 const allReservationsOpened = ref(false)
 const allReservationsRef = ref()
+const createReservationRef = ref<HTMLElement | null>(null)
+const createReservationsOpened = ref(false)
+const updateReservationRef = ref<HTMLElement | null>(null)
+const updateReservationOpened = ref(false)
+const updateAppointment = ref<Appointment | undefined>()
 
 const handleAllReservations = () => {
   allReservationsOpened.value = !allReservationsOpened.value
 }
 
-const createReservationRef = ref<HTMLElement | null>(null)
-const createReservationsOpened = ref(false)
-
 const handleCreateReservations = () => {
   createReservationsOpened.value = !createReservationsOpened.value
 }
 
-const updateReservationRef = ref<HTMLElement | null>(null)
-const updateReservationOpened = ref(false)
+const handleUpdateReservation = (appointment: Appointment | undefined) => {
+  updateAppointment.value = appointment
+}
 
-const updateReservationId = ref<number>(0)
-const handleUpdateReservation = (id: number | null) => {
-  updateReservationOpened.value = !updateReservationOpened.value
-  if (id) {
-    updateReservationId.value = id
-  }
+const allReservationsDateData = {
+  day: formattedDay.value,
+  month: formattedMonth.value,
+  weekday: formattedWeekday.value,
 }
 </script>
 
@@ -207,7 +147,7 @@ const handleUpdateReservation = (id: number | null) => {
                     <span
                       class="absolute left-1/2 -translate-x-1/2 -top-7 bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                     >
-                      {{ rezItem(hour)?.startHour }} - {{ rezItem(hour)?.finishingHour }}
+                      {{ rezItem(hour)?.startTime }} - {{ rezItem(hour)?.endTime }}
                     </span>
                   </div>
 
@@ -241,9 +181,12 @@ const handleUpdateReservation = (id: number | null) => {
         :duration="200"
       >
         <AllReservations
+          :appointments="appointments"
+          :data="allReservationsDateData"
           :allReservationsRef="allReservationsRef"
           :handleAllReservations="handleAllReservations"
           :handleCreateReservations="handleCreateReservations"
+          :updateReservationOpened="updateReservationOpened"
           :handleUpdateReservation="handleUpdateReservation"
         />
       </div>
@@ -274,7 +217,7 @@ const handleUpdateReservation = (id: number | null) => {
         :duration="200"
       >
         <UpdateReservation
-          :updateReservationId="updateReservationId"
+          :appointment="updateAppointment"
           :updateReservationRef="updateReservationRef"
           :handleUpdateReservation="handleUpdateReservation"
         />
