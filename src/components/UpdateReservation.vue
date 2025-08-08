@@ -1,21 +1,24 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
 import { defineProps } from 'vue'
 
 const props = defineProps<{
-  createReservationRef: HTMLElement | null
-  handleCreateReservations: () => void
+  updateReservationId: number | null
+  updateReservationRef: HTMLElement | null
+  handleUpdateReservation: (id: number | null) => void
 }>()
 
-const createReservationRef = ref<HTMLElement | null>(props.createReservationRef)
-const handleCreateReservations = props.handleCreateReservations
+const updateReservationId = ref<number | null>(props.updateReservationId)
+const updateReservationRef = ref<HTMLElement | null>(props.updateReservationRef)
+const handleUpdateReservation = props.handleUpdateReservation
 
 watch(
-  () => props.createReservationRef,
+  () => props.updateReservationRef,
   (newVal) => {
-    createReservationRef.value = newVal || null
+    updateReservationRef.value = newVal || null
   },
 )
 
@@ -65,8 +68,8 @@ onMounted(() => {
 })
 
 const hideCreateReservations = () => {
-  if (!createReservationRef.value) return
-  createReservationRef.value.classList.add(
+  if (!updateReservationRef.value) return
+  updateReservationRef.value.classList.add(
     '!opacity-0',
     'transform',
     'translate-x-[100px]',
@@ -74,9 +77,32 @@ const hideCreateReservations = () => {
     'duration-200',
   )
   setTimeout(() => {
-    handleCreateReservations()
+    handleUpdateReservation(null)
   }, 200)
 }
+
+/* const updateReservation = async () => {
+  try {
+    const res = await axios.put('http://91.99.227.117/api/appointments', {
+      appointmentId: updateReservationId,
+      clientFirstName: '',
+      clientLastName: '',
+      appointmentType: '',
+      date: new Date(),
+      startTime: '',
+      endTime: '',
+      cost: 0,
+    })
+
+    if (res.status === 200) {
+      console.log('appointment updated')
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+*/
 </script>
 
 <template>
@@ -85,17 +111,6 @@ const hideCreateReservations = () => {
       <button class="px-4 cursor-pointer" @click="hideCreateReservations">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
-
-      <div
-        class="flex flex-1 gap-2 px-4 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
-      >
-        <div class="bg-[#F54242] w-5 h-5 rounded-full"></div>
-        <input
-          type="text"
-          placeholder="Naziv termina"
-          class="flex-1 bg-transparent text-black outline-none"
-        />
-      </div>
 
       <VDatePicker
         v-model="date"
@@ -109,7 +124,7 @@ const hideCreateReservations = () => {
         <template #footer>
           <div class="flex flex-col flex-1 items-center justify-between h-full w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <h3 class="text-[#484848] text-xl pt-2">Odaberi vrijeme</h3>
+              <h3 class="text-[#484848] text-xl pt-8">Odaberi vrijeme</h3>
               <div class="flex px-2 pt-2 gap-[3px] w-full justify-center">
                 <div class="flex relative items-center">
                   <input
@@ -157,7 +172,7 @@ const hideCreateReservations = () => {
               </div>
             </div>
             <button class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer">
-              Dodaj termin
+              Spremi promjene
             </button>
           </div>
         </template>

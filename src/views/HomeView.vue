@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import AllReservations from '@/components/AllReservations.vue'
 import CreateReservation from '@/components/CreateReservation.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
-import { EllipsisVertical } from 'lucide-vue-next'
+import UpdateReservation from '@/components/UpdateReservation.vue'
 import { onMounted, ref } from 'vue'
 const date = ref(new Date())
 
@@ -139,25 +140,11 @@ const rezItem = (hour: number) => {
   })
 }
 
-const allReservations = ref(false)
-const hideReservationsRef = ref()
+const allReservationsOpened = ref(false)
+const allReservationsRef = ref()
 
-const showAllReservations = () => {
-  allReservations.value = !allReservations.value
-}
-
-const hideReservations = () => {
-  if (!hideReservationsRef.value) return
-  hideReservationsRef.value.classList.add(
-    '!opacity-0',
-    'transform',
-    'translate-x-[100px]',
-    'transition-all',
-    'duration-200',
-  )
-  setTimeout(() => {
-    showAllReservations()
-  }, 200)
+const handleAllReservations = () => {
+  allReservationsOpened.value = !allReservationsOpened.value
 }
 
 const createReservationRef = ref<HTMLElement | null>(null)
@@ -165,6 +152,17 @@ const createReservationsOpened = ref(false)
 
 const handleCreateReservations = () => {
   createReservationsOpened.value = !createReservationsOpened.value
+}
+
+const updateReservationRef = ref<HTMLElement | null>(null)
+const updateReservationOpened = ref(false)
+
+const updateReservationId = ref<number>(0)
+const handleUpdateReservation = (id: number | null) => {
+  updateReservationOpened.value = !updateReservationOpened.value
+  if (id) {
+    updateReservationId.value = id
+  }
 }
 </script>
 
@@ -191,7 +189,7 @@ const handleCreateReservations = () => {
               </div>
               <div class="w-full flex justify-between pt-4">
                 <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
-                <button class="underline cursor-pointer" @click="showAllReservations">
+                <button class="underline cursor-pointer" @click="handleAllReservations">
                   Svi termini
                 </button>
               </div>
@@ -233,8 +231,8 @@ const handleCreateReservations = () => {
         </template>
       </VDatePicker>
       <div
-        ref="hideReservationsRef"
-        v-if="allReservations"
+        ref="allReservationsRef"
+        v-if="allReservationsOpened"
         class="absolute inset-0 flex flex-col bg-white z-10 rounded-md py-4"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
@@ -242,50 +240,12 @@ const handleCreateReservations = () => {
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <button class="px-4 py-2 cursor-pointer" @click="hideReservations">
-          <img src="../assets/arrow-left.png" alt="" width="20" />
-        </button>
-        <div class="w-full h-fit flex flex-col px-4 py-2">
-          <h3 class="text-[#484848] text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
-          <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
-        </div>
-        <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
-          <p class="text-[#484848] px-4">{{ brojMusterija }} mušterija</p>
-          <ScrollableContainer class="flex-col px-4 py-1">
-            <div v-for="(rezervacija, index) in rezervacije" :key="index">
-              <div
-                class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
-              >
-                <div class="flex flex-col gap-[2px]">
-                  <h1 class="text-black font-medium text-[13px]">
-                    {{ rezervacija.type }} {{ rezervacija.name }} ( {{ rezervacija.price }} eura)
-                  </h1>
-                  <div class="flex gap-2 items-center">
-                    <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>
-                    <p class="text-[#454545] text-[11px] font-medium">
-                      {{ rezervacija.startHour }} - {{ rezervacija.finishingHour }}
-                    </p>
-                  </div>
-                </div>
-                <button class="cursor-pointer">
-                  <EllipsisVertical :size="24" class="text-[#444]" />
-                </button>
-              </div>
-            </div>
-          </ScrollableContainer>
-        </div>
-        <div class="flex items-end justify-center h-fit pt-8">
-          <button
-            class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-            @click="handleCreateReservations()"
-          >
-            <span
-              class="absolute -top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
-            >
-              +
-            </span>
-          </button>
-        </div>
+        <AllReservations
+          :allReservationsRef="allReservationsRef"
+          :handleAllReservations="handleAllReservations"
+          :handleCreateReservations="handleCreateReservations"
+          :handleUpdateReservation="handleUpdateReservation"
+        />
       </div>
 
       <div
@@ -301,6 +261,22 @@ const handleCreateReservations = () => {
         <CreateReservation
           :createReservationRef="createReservationRef"
           :handleCreateReservations="handleCreateReservations"
+        />
+      </div>
+      <div
+        ref="updateReservationRef"
+        v-if="updateReservationOpened"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full"
+        v-motion="'transition'"
+        :initial="{ opacity: 0, translateX: 100 }"
+        :enter="{ opacity: 1, translateX: 0 }"
+        :leave="{ opacity: 0, translateX: 100 }"
+        :duration="200"
+      >
+        <UpdateReservation
+          :updateReservationId="updateReservationId"
+          :updateReservationRef="updateReservationRef"
+          :handleUpdateReservation="handleUpdateReservation"
         />
       </div>
     </div>
