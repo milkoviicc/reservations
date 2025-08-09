@@ -40,6 +40,7 @@ watch(
 )
 
 const formattedDay = ref(data.day)
+console.log(data.day)
 const formattedMonth = ref(data.month)
 const formattedWeekday = ref(data.weekday)
 
@@ -76,7 +77,7 @@ const updateReservation = (appointment: Appointment) => {
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <button class="px-4 py-2 cursor-pointer" @click="hideReservations">
       <img src="../assets/arrow-left.png" alt="" width="20" />
     </button>

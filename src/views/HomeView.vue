@@ -5,7 +5,7 @@ import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateReservation from '@/components/UpdateReservation.vue'
 import type { Appointment } from '@/lib/types'
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const date = ref(new Date())
 const selectedColor = ref('red')
@@ -52,7 +52,7 @@ const handleDateChange = async (newDate: Date) => {
     const formattedDate = newDate.toISOString().split('T')[0]
 
     const getAppointments = await axios.get(
-      `http://91.99.227.117/api/appointments/${formattedDate}`,
+      `http://91.99.227.117/api/appointments/date/${formattedDate}`,
     )
 
     if (getAppointments.status === 200) {
@@ -65,18 +65,49 @@ const handleDateChange = async (newDate: Date) => {
 }
 
 const appointments = ref<Appointment[]>([])
+// Hours for the main timeline (like your code)
+const hours = Array.from({ length: 11 }, (_, i) => i + 9) // 9 → 19
 
-function parseHour(hourStr: string): number {
-  const [h, m] = hourStr.split(':').map(Number)
-  return h + m / 60
+// Helper: check if a given hour block is *fully* red or partially green
+function isHourOccupied(hour: number) {
+  // Split the hour into 15-minute chunks and check if *all* are occupied
+  const chunks = [0, 15, 30, 45]
+  return chunks.every((min) => isIntervalOccupied(hour, min))
 }
 
-const rezItem = (hour: number) => {
-  return appointments.value.find((item) => {
-    const start = parseHour(item.startTime)
-    const end = parseHour(item.endTime)
-    return hour >= start && hour < end
+// Helper: decide the color of the hour based on 15-min precision
+function getHourColor(hour: number) {
+  const chunks = [0, 15, 30, 45]
+  const redCount = chunks.filter((min) => isIntervalOccupied(hour, min)).length
+
+  if (redCount === 0) return 'bg-green-500'
+  if (redCount === chunks.length) return 'bg-red-600'
+  return 'bg-gradient-to-r from-green-500 via-red-600 to-green-500' // mixed hour
+}
+
+// Check if a 15-min interval overlaps an appointment
+function isIntervalOccupied(hour: number, min: number) {
+  const intervalStart = hour * 60 + min
+  const intervalEnd = intervalStart + 15
+
+  return appointments.value.some((appt) => {
+    const [sh, sm] = appt.startTime.split(':').map(Number)
+    const [eh, em] = appt.endTime.split(':').map(Number)
+    const apptStart = sh * 60 + sm
+    const apptEnd = eh * 60 + em
+    return apptStart < intervalEnd && apptEnd > intervalStart
   })
+}
+
+// Get the first appointment in an hour (for tooltip)
+function getAppointment(hour: number) {
+  return (
+    appointments.value.find((appt) => {
+      const [sh] = appt.startTime.split(':').map(Number)
+      const [eh] = appt.endTime.split(':').map(Number)
+      return sh === hour || eh === hour || (sh < hour && eh > hour)
+    }) || null
+  )
 }
 
 const allReservationsOpened = ref(false)
@@ -99,11 +130,11 @@ const handleUpdateReservation = (appointment: Appointment | undefined) => {
   updateAppointment.value = appointment
 }
 
-const allReservationsDateData = {
+const allReservationsDateData = computed(() => ({
   day: formattedDay.value,
   month: formattedMonth.value,
   weekday: formattedWeekday.value,
-}
+}))
 </script>
 
 <template>
@@ -135,23 +166,20 @@ const allReservationsDateData = {
               </div>
               <ScrollableContainer>
                 <div
-                  v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
+                  v-for="hour in hours"
                   :key="hour"
-                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t-[1px] border-b-[1px] text-center text-sm font-medium flex flex-col items-center"
+                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t border-b text-center text-sm font-medium flex flex-col items-center"
                 >
                   {{ hour.toString().padStart(2, '0') }}:00
-                  <div
-                    v-if="rezItem(hour)"
-                    class="w-full h-8 rounded mt-2 relative group bg-[#DC2626]"
-                  >
+
+                  <div class="w-full h-8 rounded mt-2 relative group" :class="getHourColor(hour)">
                     <span
+                      v-if="getAppointment(hour)"
                       class="absolute left-1/2 -translate-x-1/2 -top-7 bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                     >
-                      {{ rezItem(hour)?.startTime }} - {{ rezItem(hour)?.endTime }}
+                      {{ getAppointment(hour)?.startTime }} - {{ getAppointment(hour)?.endTime }}
                     </span>
                   </div>
-
-                  <div v-else class="w-full h-8 rounded mt-2 bg-green-500"></div>
                 </div>
               </ScrollableContainer>
             </div>

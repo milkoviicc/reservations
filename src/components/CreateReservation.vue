@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
@@ -35,12 +36,17 @@ const getFormattedDateParts = (date: Date) => {
     weekday: 'long',
   })
 
+  const year = date.toLocaleDateString('hr-HR', {
+    year: 'numeric',
+  })
+
   const uppercase = (str: string) => str.toUpperCase()
 
   return {
     day,
     month: uppercase(month),
     weekday: uppercase(weekday),
+    year: year,
   }
 }
 
@@ -56,6 +62,14 @@ const handleDateChange = (newDate: Date) => {
   formattedDay.value = day
   formattedMonth.value = month
   formattedWeekday.value = weekday
+}
+
+const getDate = () => {
+  const day = String(date.value.getDate()).padStart(2, '0')
+  const month = String(date.value.getMonth() + 1).padStart(2, '0')
+  const year = date.value.getFullYear()
+
+  return { day, year, month }
 }
 
 onMounted(() => {
@@ -77,6 +91,35 @@ const hideCreateReservations = () => {
     handleCreateReservations()
   }, 200)
 }
+
+const appointmentType = ref('')
+const appointmentStartingHours = ref('')
+const appointmentStartingMinutes = ref('')
+const appointmentEndingHours = ref('')
+const appointmentEndingMinutes = ref('')
+
+const createAppointment = async (e: Event) => {
+  e.preventDefault()
+
+  const appointmentDate = getDate()
+  try {
+    const res = await axios.post('http://91.99.227.117/api/appointments', {
+      clientFirstName: 'Marko',
+      clientLastName: 'Milkovic',
+      appointmentType: appointmentType.value,
+      date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
+      startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
+      endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value}`,
+      cost: 50,
+    })
+
+    if (res.status === 200) {
+      console.log('new appointment created')
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
@@ -91,8 +134,10 @@ const hideCreateReservations = () => {
       >
         <div class="bg-[#F54242] w-5 h-5 rounded-full"></div>
         <input
+          v-model="appointmentType"
           type="text"
           placeholder="Naziv termina"
+          required
           class="flex-1 bg-transparent text-black outline-none"
         />
       </div>
@@ -110,55 +155,71 @@ const hideCreateReservations = () => {
           <div class="flex flex-col flex-1 items-center justify-between h-full w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <h3 class="text-[#484848] text-xl pt-2">Odaberi vrijeme</h3>
-              <div class="flex px-2 pt-2 gap-[3px] w-full justify-center">
-                <div class="flex relative items-center">
-                  <input
-                    type="number"
-                    placeholder="00"
-                    min="1"
-                    max="23"
-                    class="appearance-none w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                  />
-                  <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
+              <form
+                class="flex flex-col justify-between w-full h-full pt-2"
+                method="POST"
+                @submit="createAppointment"
+              >
+                <div class="flex gap-[3px] w-full justify-center px-2">
+                  <div class="flex relative items-center">
+                    <input
+                      type="number"
+                      v-model="appointmentStartingHours"
+                      placeholder="00"
+                      min="1"
+                      max="23"
+                      required
+                      class="appearance-none w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                    />
+                    <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
+                  </div>
+                  <p class="text-6xl leading-8">:</p>
+                  <div class="flex relative items-center">
+                    <input
+                      type="number"
+                      placeholder="00"
+                      v-model="appointmentStartingMinutes"
+                      min="0"
+                      max="59"
+                      required
+                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                    />
+                    <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
+                  </div>
+                  <p class="text-6xl leading-8">-</p>
+                  <div class="flex relative items-center">
+                    <input
+                      type="number"
+                      v-model="appointmentEndingHours"
+                      placeholder="00"
+                      min="1"
+                      max="23"
+                      required
+                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                    />
+                    <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
+                  </div>
+                  <p class="text-6xl leading-8">:</p>
+                  <div class="flex relative items-center">
+                    <input
+                      type="number"
+                      v-model="appointmentEndingMinutes"
+                      placeholder="00"
+                      min="0"
+                      max="59"
+                      required
+                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                    />
+                    <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
+                  </div>
                 </div>
-                <p class="text-6xl leading-8">:</p>
-                <div class="flex relative items-center">
-                  <input
-                    type="number"
-                    placeholder="00"
-                    min="0"
-                    max="59"
-                    class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                  />
-                  <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
-                </div>
-                <p class="text-6xl leading-8">-</p>
-                <div class="flex relative items-center">
-                  <input
-                    type="number"
-                    placeholder="00"
-                    min="1"
-                    max="23"
-                    class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                  />
-                  <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
-                </div>
-                <p class="text-6xl leading-8">:</p>
-                <div class="flex relative items-center">
-                  <input
-                    type="number"
-                    placeholder="00"
-                    min="0"
-                    max="59"
-                    class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                  />
-                  <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
-                </div>
-              </div>
+                <input
+                  type="submit"
+                  value="Dodaj termin"
+                  class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer"
+                />
+              </form>
             </div>
-            <button class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer">
-              Dodaj termin
-            </button>
           </div>
         </template>
       </VDatePicker>

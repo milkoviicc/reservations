@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { User } from '@/lib/types'
+import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { ref } from 'vue'
 
 const username = ref('')
 const password = ref('')
 
+const authStore = useAuthStore()
+
 const handleLogin = async (e: Event) => {
   e.preventDefault()
 
   if (username.value.length > 0 && password.value.length > 0) {
     try {
-      console.log(username.value)
       const res = await axios.post('http://91.99.227.117/api/auth/login', {
         userName: username.value,
         password: password.value,
@@ -20,9 +22,9 @@ const handleLogin = async (e: Event) => {
       if (res.status === 200) {
         const user: User = res.data
 
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('token', user.token)
-        axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
+        authStore.login(user)
+
+        window.location.href = '/'
       }
     } catch (error) {
       console.error(error)
