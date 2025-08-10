@@ -68,46 +68,69 @@ const appointments = ref<Appointment[]>([])
 // Hours for the main timeline (like your code)
 const hours = Array.from({ length: 11 }, (_, i) => i + 9) // 9 → 19
 
-// Helper: check if a given hour block is *fully* red or partially green
-function isHourOccupied(hour: number) {
-  // Split the hour into 15-minute chunks and check if *all* are occupied
-  const chunks = [0, 15, 30, 45]
-  return chunks.every((min) => isIntervalOccupied(hour, min))
-}
-
 // Helper: decide the color of the hour based on 15-min precision
-function getHourColor(hour: number) {
-  const chunks = [0, 15, 30, 45]
-  const redCount = chunks.filter((min) => isIntervalOccupied(hour, min)).length
+function getHourStyle(hour: number): Record<string, string> {
+  let redStartPercent: number | null = null
+  let redEndPercent: number | null = null
 
-  if (redCount === 0) return 'bg-green-500'
-  if (redCount === chunks.length) return 'bg-red-600'
-  return 'bg-gradient-to-r from-green-500 via-red-600 to-green-500' // mixed hour
-}
+  const hourStartMin = hour * 60
+  const hourEndMin = hourStartMin + 60
 
-// Check if a 15-min interval overlaps an appointment
-function isIntervalOccupied(hour: number, min: number) {
-  const intervalStart = hour * 60 + min
-  const intervalEnd = intervalStart + 15
-
-  return appointments.value.some((appt) => {
+  appointments.value.forEach((appt) => {
     const [sh, sm] = appt.startTime.split(':').map(Number)
     const [eh, em] = appt.endTime.split(':').map(Number)
+
     const apptStart = sh * 60 + sm
     const apptEnd = eh * 60 + em
-    return apptStart < intervalEnd && apptEnd > intervalStart
-  })
-}
 
+    // Find overlap within the current hour
+    const overlapStart = Math.max(hourStartMin, apptStart)
+    const overlapEnd = Math.min(hourEndMin, apptEnd)
+
+    if (overlapEnd > overlapStart) {
+      const startPct = ((overlapStart - hourStartMin) / 60) * 100
+      const endPct = ((overlapEnd - hourStartMin) / 60) * 100
+
+      redStartPercent = redStartPercent === null ? startPct : Math.min(redStartPercent, startPct)
+
+      redEndPercent = redEndPercent === null ? endPct : Math.max(redEndPercent, endPct)
+    }
+  })
+
+  if (redStartPercent === null) {
+    // Fully free (green)
+    return { background: '#89EB7C' }
+  }
+
+  // Create gradient from green → red → green
+  return {
+    background: `linear-gradient(
+    to right,
+    #89EB7C 0%,
+    #89EB7C ${redStartPercent}%,
+    #F54242 ${redStartPercent}%,
+    #F54242 ${redEndPercent}%,
+    #89EB7C ${redEndPercent}%,
+    #89EB7C 100%
+  )`,
+  }
+}
+const hoveredHour = ref<number | null>(null)
 // Get the first appointment in an hour (for tooltip)
 function getAppointment(hour: number) {
-  return (
-    appointments.value.find((appt) => {
-      const [sh] = appt.startTime.split(':').map(Number)
-      const [eh] = appt.endTime.split(':').map(Number)
-      return sh === hour || eh === hour || (sh < hour && eh > hour)
-    }) || null
-  )
+  return appointments.value.find((app) => {
+    const [startH, startM] = app.startTime.split(':').map(Number)
+    const [endH, endM] = app.endTime.split(':').map(Number)
+
+    const slotStart = hour * 60 // slot start in minutes
+    const slotEnd = (hour + 1) * 60 // slot end in minutes
+
+    const appStart = startH * 60 + startM
+    const appEnd = endH * 60 + endM
+
+    // Match if appointment overlaps the slot
+    return appStart < slotEnd && appEnd > slotStart
+  })
 }
 
 const allReservationsOpened = ref(false)
@@ -126,11 +149,16 @@ const handleCreateReservations = () => {
   createReservationsOpened.value = !createReservationsOpened.value
 }
 
+const openUpdateReservations = () => {
+  updateReservationOpened.value = !updateReservationOpened.value
+}
+
 const handleUpdateReservation = (appointment: Appointment | undefined) => {
   updateAppointment.value = appointment
 }
 
 const allReservationsDateData = computed(() => ({
+  date: date.value,
   day: formattedDay.value,
   month: formattedMonth.value,
   weekday: formattedWeekday.value,
@@ -166,19 +194,35 @@ const allReservationsDateData = computed(() => ({
               </div>
               <ScrollableContainer>
                 <div
-                  v-for="hour in hours"
-                  :key="hour"
-                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t border-b text-center text-sm font-medium flex flex-col items-center"
+                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t-[1px] border-b-[1px] text-center text-sm font-medium flex gap-[3px] items-center"
                 >
-                  {{ hour.toString().padStart(2, '0') }}:00
-
-                  <div class="w-full h-8 rounded mt-2 relative group" :class="getHourColor(hour)">
-                    <span
-                      v-if="getAppointment(hour)"
-                      class="absolute left-1/2 -translate-x-1/2 -top-7 bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                    >
-                      {{ getAppointment(hour)?.startTime }} - {{ getAppointment(hour)?.endTime }}
-                    </span>
+                  <div
+                    v-for="hour in hours"
+                    :key="hour"
+                    class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
+                    @mouseenter="hoveredHour = hour"
+                    @mouseleave="hoveredHour = null"
+                  >
+                    <p>{{ hour.toString().padStart(2, '0') }}:00</p>
+                    <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
+                      <div
+                        class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
+                        v-if="getAppointment(hour)?.startTime"
+                      >
+                        <span
+                          v-if="hoveredHour === hour"
+                          class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                        >
+                          <p class="text-black z-50 h-fit w-full">
+                            {{ getAppointment(hour)?.startTime }}
+                          </p>
+                          <p class="text-black z-50 h-fit w-full">-</p>
+                          <p class="text-black z-50 h-fit w-full">
+                            {{ getAppointment(hour)?.endTime }}
+                          </p>
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </ScrollableContainer>
@@ -214,8 +258,9 @@ const allReservationsDateData = computed(() => ({
           :allReservationsRef="allReservationsRef"
           :handleAllReservations="handleAllReservations"
           :handleCreateReservations="handleCreateReservations"
-          :updateReservationOpened="updateReservationOpened"
+          :openUpdateReservations="openUpdateReservations"
           :handleUpdateReservation="handleUpdateReservation"
+          :updateAppointments="handleDateChange"
         />
       </div>
 
@@ -232,6 +277,7 @@ const allReservationsDateData = computed(() => ({
         <CreateReservation
           :createReservationRef="createReservationRef"
           :handleCreateReservations="handleCreateReservations"
+          :updateAppointments="handleDateChange"
         />
       </div>
       <div
@@ -248,6 +294,7 @@ const allReservationsDateData = computed(() => ({
           :appointment="updateAppointment"
           :updateReservationRef="updateReservationRef"
           :handleUpdateReservation="handleUpdateReservation"
+          :updateAppointments="handleDateChange"
         />
       </div>
     </div>

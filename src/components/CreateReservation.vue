@@ -8,10 +8,12 @@ import { defineProps } from 'vue'
 const props = defineProps<{
   createReservationRef: HTMLElement | null
   handleCreateReservations: () => void
+  updateAppointments: (newDate: Date) => void
 }>()
 
 const createReservationRef = ref<HTMLElement | null>(props.createReservationRef)
 const handleCreateReservations = props.handleCreateReservations
+const updateAppointments = props.updateAppointments
 
 watch(
   () => props.createReservationRef,
@@ -114,7 +116,8 @@ const createAppointment = async (e: Event) => {
     })
 
     if (res.status === 200) {
-      console.log('new appointment created')
+      updateAppointments(date.value)
+      handleCreateReservations()
     }
   } catch (error) {
     console.error(error)

@@ -10,11 +10,13 @@ const props = defineProps<{
   appointment: Appointment | undefined
   updateReservationRef: HTMLElement | null
   handleUpdateReservation: (appointment: Appointment) => void
+  updateAppointments: (newDate: Date) => void
 }>()
 
 const appointment = ref<Appointment | undefined>(props.appointment)
 const updateReservationRef = ref<HTMLElement | null>(props.updateReservationRef)
 const handleUpdateReservation = props.handleUpdateReservation
+const updateAppointments = props.updateAppointments
 
 watch(
   () => props.updateReservationRef,
@@ -66,14 +68,15 @@ const updateReservation = async () => {
         clientFirstName: appointment.value.clientFirstName,
         clientLastName: appointment.value.clientLastName,
         appointmentType: appointment.value.appointmentType,
-        date: date,
-        startTime: `${startingHour.value}-${startingMinutes.value}:00`,
-        endTime: `${endingHour.value}-${endingMinutes.value}:00`,
+        date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
+        startTime: `${startingHour.value}:${startingMinutes.value}:00`,
+        endTime: `${endingHour.value}:${endingMinutes.value}:00`,
         cost: appointment.value.cost,
       })
 
       if (res.status === 200) {
-        console.log('appointment updated')
+        updateAppointments(date.value)
+        handleUpdateReservation(appointment.value)
       }
     } catch (error) {
       console.error(error)

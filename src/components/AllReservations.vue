@@ -13,6 +13,7 @@ import type { Appointment } from '@/lib/types'
 const props = defineProps<{
   appointments: Appointment[]
   data: {
+    date: Date
     day: number
     month: string
     weekday: string
@@ -20,8 +21,9 @@ const props = defineProps<{
   allReservationsRef: HTMLElement | null
   handleAllReservations: () => void
   handleCreateReservations: () => void
-  updateReservationOpened: boolean
+  openUpdateReservations: () => void
   handleUpdateReservation: (appointment: Appointment) => void
+  updateAppointments: (newDate: Date) => void
 }>()
 
 const appointments = ref(props.appointments)
@@ -29,8 +31,9 @@ const data = props.data
 const allReservationsRef = ref<HTMLElement | null>(props.allReservationsRef)
 const handleAllReservations = props.handleAllReservations
 const handleCreateReservations = props.handleCreateReservations
-const updateReservationOpened = ref<boolean>(props.updateReservationOpened)
+const openUpdateReservations = props.openUpdateReservations
 const handleUpdateReservation = props.handleUpdateReservation
+const updateAppointments = props.updateAppointments
 
 watch(
   () => props.allReservationsRef,
@@ -40,7 +43,6 @@ watch(
 )
 
 const formattedDay = ref(data.day)
-console.log(data.day)
 const formattedMonth = ref(data.month)
 const formattedWeekday = ref(data.weekday)
 
@@ -63,7 +65,8 @@ const deleteReservation = async (appointmentId: string) => {
     const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
 
     if (res.status === 200) {
-      console.log('appointment deleted')
+      updateAppointments(data.date)
+      openUpdateReservations()
     }
   } catch (error) {
     console.error(error)
@@ -71,7 +74,7 @@ const deleteReservation = async (appointmentId: string) => {
 }
 
 const updateReservation = (appointment: Appointment) => {
-  updateReservationOpened.value = !updateReservationOpened.value
+  openUpdateReservations()
   handleUpdateReservation(appointment)
 }
 </script>
