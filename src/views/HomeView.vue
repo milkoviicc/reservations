@@ -166,60 +166,61 @@ const allReservationsDateData = computed(() => ({
 </script>
 
 <template>
-  <main class="w-fit h-fit">
-    <div class="relative max-h-fit">
+  <main class="max-w-[640px] sm:w-fit sm:max-w-full sm:h-fit overflow-x-hidden">
+    <div class="relative max-h-fit max-w-[640px] sm:w-fit sm:max-w-full">
       <VDatePicker
         v-model="date"
         mode="date"
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex flex-col flex-1 h-full pt-12"
+        class="flex flex-col flex-1 h-full pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
         @update:model-value="handleDateChange"
+        disable-page-swipe
       >
         <template #footer>
-          <div class="w-full h-full max-h-[300px] relative">
-            <div class="max-w-[300px] px-4 border-t flex flex-col border-[rgba(0,0,0,0.2)]">
-              <div class="w-full h-full flex flex-col">
+          <div class="w-full max-w-[640px] h-full max-h-[300px] relative box-border">
+            <div
+              class="w-full sm:max-w-[300px] border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border"
+            >
+              <div class="w-full h-full flex flex-col px-4 box-border">
                 <h3 class="text-[#484848] text-xl font-bold">
                   {{ formattedDay }}. {{ formattedMonth }}
                 </h3>
                 <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
               </div>
-              <div class="w-full flex justify-between pt-4">
+
+              <div class="w-full flex justify-between pt-4 px-4 box-border">
                 <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
                 <button class="underline cursor-pointer" @click="handleAllReservations">
                   Svi termini
                 </button>
               </div>
-              <ScrollableContainer>
-                <div
-                  class="min-w-[60px] px-[1px] py-1 border-[#C7C7C7] border-t-[1px] border-b-[1px] text-center text-sm font-medium flex gap-[3px] items-center"
-                >
+
+              <!-- HOURS: SCROLLABLE AREA -->
+              <ScrollableContainer class="overflow-x-auto">
+                <div class="flex gap-1 flex-nowrap px-4 box-border">
                   <div
                     v-for="hour in hours"
                     :key="hour"
-                    class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
+                    class="flex-shrink-0 w-[60px] py-1 border-[#C7C7C7] border-t border-b text-center text-sm font-medium flex flex-col items-center"
                     @mouseenter="hoveredHour = hour"
                     @mouseleave="hoveredHour = null"
                   >
                     <p>{{ hour.toString().padStart(2, '0') }}:00</p>
-                    <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
+
+                    <div :style="getHourStyle(hour)" class="w-full h-8 rounded-md relative">
                       <div
-                        class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
+                        class="absolute left-1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
                         v-if="getAppointment(hour)?.startTime"
                       >
                         <span
                           v-if="hoveredHour === hour"
-                          class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          class="flex flex-col items-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                         >
-                          <p class="text-black z-50 h-fit w-full">
-                            {{ getAppointment(hour)?.startTime }}
-                          </p>
-                          <p class="text-black z-50 h-fit w-full">-</p>
-                          <p class="text-black z-50 h-fit w-full">
-                            {{ getAppointment(hour)?.endTime }}
-                          </p>
+                          <p>{{ getAppointment(hour)?.startTime }}</p>
+                          <p>-</p>
+                          <p>{{ getAppointment(hour)?.endTime }}</p>
                         </span>
                       </div>
                     </div>
@@ -227,6 +228,7 @@ const allReservationsDateData = computed(() => ({
                 </div>
               </ScrollableContainer>
             </div>
+
             <div class="flex items-end justify-center h-full pt-8 pb-4">
               <button
                 class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
@@ -318,5 +320,17 @@ const allReservationsDateData = computed(() => ({
 .vc-arrow,
 .vc-title {
   background-color: transparent !important;
+}
+
+.vc-container,
+.vc-monthly,
+.vc-pane-container,
+.vc-pane-layout,
+.vc-header,
+.vc-pane-header-wrapper,
+.vc-pane {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 </style>

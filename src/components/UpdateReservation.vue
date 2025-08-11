@@ -100,6 +100,7 @@ const updateReservation = async () => {
         :color="selectedColor"
         class="flex-1 w-full max-w-[301.6px] min-w-[301.6px] h-[400px] !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
         @update:model-value="handleDateChange"
+        disable-page-swipe
       >
         <template #footer>
           <div class="flex flex-col flex-1 items-center justify-between h-full w-full">
