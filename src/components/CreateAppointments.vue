@@ -6,19 +6,19 @@ const date = ref(new Date())
 import { defineProps } from 'vue'
 
 const props = defineProps<{
-  createReservationRef: HTMLElement | null
-  handleCreateReservations: () => void
+  createAppointmentRef: HTMLElement | null
+  handleCreateAppointments: () => void
   updateAppointments: (newDate: Date) => void
 }>()
 
-const createReservationRef = ref<HTMLElement | null>(props.createReservationRef)
-const handleCreateReservations = props.handleCreateReservations
+const createAppointmentRef = ref<HTMLElement | null>(props.createAppointmentRef)
+const handleCreateAppointments = props.handleCreateAppointments
 const updateAppointments = props.updateAppointments
 
 watch(
-  () => props.createReservationRef,
+  () => props.createAppointmentRef,
   (newVal) => {
-    createReservationRef.value = newVal || null
+    createAppointmentRef.value = newVal || null
   },
 )
 
@@ -80,9 +80,9 @@ onMounted(() => {
   }
 })
 
-const hideCreateReservations = () => {
-  if (!createReservationRef.value) return
-  createReservationRef.value.classList.add(
+const hideCreateAppointments = () => {
+  if (!createAppointmentRef.value) return
+  createAppointmentRef.value.classList.add(
     '!opacity-0',
     'transform',
     'translate-x-[100px]',
@@ -90,11 +90,12 @@ const hideCreateReservations = () => {
     'duration-200',
   )
   setTimeout(() => {
-    handleCreateReservations()
+    handleCreateAppointments()
   }, 200)
 }
 
 const appointmentType = ref('')
+const clientName = ref('')
 const appointmentStartingHours = ref('')
 const appointmentStartingMinutes = ref('')
 const appointmentEndingHours = ref('')
@@ -106,8 +107,8 @@ const createAppointment = async (e: Event) => {
   const appointmentDate = getDate()
   try {
     const res = await axios.post('http://91.99.227.117/api/appointments', {
-      clientFirstName: 'Marko',
-      clientLastName: 'Milkovic',
+      clientFirstName: clientName.value.trim().split(' ')[0] || '',
+      clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
       appointmentType: appointmentType.value,
       date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
       startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
@@ -117,7 +118,7 @@ const createAppointment = async (e: Event) => {
 
     if (res.status === 200) {
       updateAppointments(date.value)
-      handleCreateReservations()
+      handleCreateAppointments()
     }
   } catch (error) {
     console.error(error)
@@ -126,23 +127,39 @@ const createAppointment = async (e: Event) => {
 </script>
 
 <template>
-  <main class="relative h-full w-full">
+  <main class="min-h-full h-full w-full sm:max-w-full sm:w-full">
     <div class="relative w-full h-full flex flex-col gap-4">
-      <button class="px-4 cursor-pointer" @click="hideCreateReservations">
+      <button class="px-4 cursor-pointer" @click="hideCreateAppointments">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
 
-      <div
-        class="flex flex-1 gap-2 px-4 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
-      >
-        <div class="bg-[#F54242] w-5 h-5 rounded-full"></div>
-        <input
-          v-model="appointmentType"
-          type="text"
-          placeholder="Naziv termina"
-          required
-          class="flex-1 bg-transparent text-black outline-none"
-        />
+      <div class="flex flex-col gap-1">
+        <div
+          class="flex flex-1 gap-4 px-3 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
+        >
+          <div class="bg-[#F54242] w-[22px] h-[22px] rounded-full"></div>
+          <input
+            v-model="appointmentType"
+            type="text"
+            placeholder="Naziv termina"
+            required
+            class="bg-transparent text-black outline-none"
+          />
+        </div>
+        <div
+          class="flex flex-1 gap-2 px-2 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
+        >
+          <div class="w-[34px] h-[34px] rounded-full">
+            <img src="../assets/frame.png" alt="User frame" class="w-full h-full" />
+          </div>
+          <input
+            v-model="clientName"
+            type="text"
+            placeholder="Ime i prezime klijenta"
+            required
+            class="flex-1 bg-transparent text-black outline-none"
+          />
+        </div>
       </div>
 
       <VDatePicker
@@ -151,21 +168,23 @@ const createAppointment = async (e: Event) => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex-1 w-full max-w-[301.6px] min-w-[301.6px] h-[400px] !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
+        class="flex-1 w-full max-w-[301.6px] min-w-[301.6px] h-full !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
-          <div class="flex flex-col flex-1 items-center justify-between h-full w-full">
+          <div
+            class="flex flex-col flex-1 sm:min-h-[200px] items-center justify-between h-full w-full"
+          >
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <h3 class="text-[#484848] text-xl pt-2">Odaberi vrijeme</h3>
+              <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
               <form
-                class="flex flex-col justify-between w-full h-full pt-2"
+                class="flex flex-col justify-between w-full h-full"
                 method="POST"
                 @submit="createAppointment"
               >
-                <div class="flex gap-[3px] w-full justify-center px-2">
-                  <div class="flex relative items-center">
+                <div class="flex flex-1 gap-[3px] w-full justify-center px-2">
+                  <div class="flex relative">
                     <input
                       type="number"
                       v-model="appointmentStartingHours"
@@ -173,12 +192,12 @@ const createAppointment = async (e: Event) => {
                       min="1"
                       max="23"
                       required
-                      class="appearance-none w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                     />
-                    <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
+                    <p class="absolute top-16 left-0 text-xs">Sati</p>
                   </div>
-                  <p class="text-6xl leading-8">:</p>
-                  <div class="flex relative items-center">
+                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
+                  <div class="flex relative">
                     <input
                       type="number"
                       placeholder="00"
@@ -186,12 +205,12 @@ const createAppointment = async (e: Event) => {
                       min="0"
                       max="59"
                       required
-                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                     />
-                    <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
+                    <p class="absolute top-16 left-0 text-xs">Minute</p>
                   </div>
-                  <p class="text-6xl leading-8">-</p>
-                  <div class="flex relative items-center">
+                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">-</p>
+                  <div class="flex relative">
                     <input
                       type="number"
                       v-model="appointmentEndingHours"
@@ -199,12 +218,12 @@ const createAppointment = async (e: Event) => {
                       min="1"
                       max="23"
                       required
-                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                     />
-                    <p class="absolute -bottom-5 left-0 text-xs">Sati</p>
+                    <p class="absolute top-16 left-0 text-xs">Sati</p>
                   </div>
-                  <p class="text-6xl leading-8">:</p>
-                  <div class="flex relative items-center">
+                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
+                  <div class="flex relative">
                     <input
                       type="number"
                       v-model="appointmentEndingMinutes"
@@ -212,15 +231,15 @@ const createAppointment = async (e: Event) => {
                       min="0"
                       max="59"
                       required
-                      class="w-12 h-12 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                     />
-                    <p class="absolute -bottom-5 left-0 text-xs">Minute</p>
+                    <p class="absolute top-16 left-0 text-xs">Minute</p>
                   </div>
                 </div>
                 <input
                   type="submit"
                   value="Dodaj termin"
-                  class="w-full bg-[#F54242] text-white py-1 rounded-b-md cursor-pointer"
+                  class="w-full bg-[#F54242] text-white py-1 sm:py-3 rounded-b-md cursor-pointer"
                 />
               </form>
             </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AllReservations from '@/components/AllReservations.vue'
-import CreateReservation from '@/components/CreateReservation.vue'
+import AllAppointments from '@/components/AllAppointments.vue'
+import CreateAppointment from '@/components/CreateAppointments.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
-import UpdateReservation from '@/components/UpdateReservation.vue'
+import UpdateAppointments from '@/components/UpdateAppointments.vue'
 import type { Appointment } from '@/lib/types'
 import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
@@ -12,6 +12,14 @@ const selectedColor = ref('red')
 const formattedDay = ref<number>(0)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
+
+const allAppointmentsOpened = ref(false)
+const allAppointmentsRef = ref()
+const createAppointmentRef = ref<HTMLElement | null>(null)
+const createAppointmentsOpened = ref(false)
+const updateAppointmentRef = ref<HTMLElement | null>(null)
+const updateAppointmentOpened = ref(false)
+const updateAppointment = ref<Appointment | undefined>()
 
 const getFormattedDateParts = (date: Date) => {
   const day = date.getDate() // e.g., 15
@@ -133,56 +141,52 @@ function getAppointment(hour: number) {
   })
 }
 
-const allReservationsOpened = ref(false)
-const allReservationsRef = ref()
-const createReservationRef = ref<HTMLElement | null>(null)
-const createReservationsOpened = ref(false)
-const updateReservationRef = ref<HTMLElement | null>(null)
-const updateReservationOpened = ref(false)
-const updateAppointment = ref<Appointment | undefined>()
-
-const handleAllReservations = () => {
-  allReservationsOpened.value = !allReservationsOpened.value
+const handleAllAppointments = () => {
+  allAppointmentsOpened.value = !allAppointmentsOpened.value
 }
 
-const handleCreateReservations = () => {
-  createReservationsOpened.value = !createReservationsOpened.value
+const handleCreateAppointments = () => {
+  createAppointmentsOpened.value = !createAppointmentsOpened.value
 }
 
-const openUpdateReservations = () => {
-  updateReservationOpened.value = !updateReservationOpened.value
+const openUpdateAppointments = () => {
+  updateAppointmentOpened.value = !updateAppointmentOpened.value
 }
 
-const handleUpdateReservation = (appointment: Appointment | undefined) => {
+const handleUpdateAppointment = (appointment: Appointment | undefined) => {
   updateAppointment.value = appointment
+  openUpdateAppointments()
 }
 
-const allReservationsDateData = computed(() => ({
+const allAppointmentsDateData = computed(() => ({
   date: date.value,
   day: formattedDay.value,
   month: formattedMonth.value,
   weekday: formattedWeekday.value,
 }))
+
+const handleDeleteAppointment = (appointmentId: string) => {
+  appointments.value = appointments.value.filter((appt) => appt.appointmentId !== appointmentId)
+  console.log('Updated appointments:', appointments.value)
+}
 </script>
 
 <template>
-  <main class="max-w-[640px] sm:w-fit sm:max-w-full sm:h-fit overflow-x-hidden">
-    <div class="relative max-h-fit max-w-[640px] sm:w-fit sm:max-w-full">
+  <main class="min-h-full h-full sm:h-fit">
+    <div class="min-h-full h-full max-w-[640px] sm:w-fit sm:max-w-full">
       <VDatePicker
         v-model="date"
         mode="date"
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex flex-col flex-1 h-full pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
+        class="flex flex-col flex-1 h-full min-h-full pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
-          <div class="w-full max-w-[640px] h-full max-h-[300px] relative box-border">
-            <div
-              class="w-full sm:max-w-[300px] border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border"
-            >
+          <div class="w-full h-full max-h-full relative box-border">
+            <div class="w-full h-full border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border">
               <div class="w-full h-full flex flex-col px-4 box-border">
                 <h3 class="text-[#484848] text-xl font-bold">
                   {{ formattedDay }}. {{ formattedMonth }}
@@ -192,35 +196,38 @@ const allReservationsDateData = computed(() => ({
 
               <div class="w-full flex justify-between pt-4 px-4 box-border">
                 <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
-                <button class="underline cursor-pointer" @click="handleAllReservations">
+                <button class="underline cursor-pointer" @click="handleAllAppointments">
                   Svi termini
                 </button>
               </div>
-
-              <!-- HOURS: SCROLLABLE AREA -->
-              <ScrollableContainer class="overflow-x-auto">
-                <div class="flex gap-1 flex-nowrap px-4 box-border">
+              <ScrollableContainer :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px]'">
+                <div
+                  class="w-full px-[1px] py-1 text-center text-sm font-medium flex gap-[3px] items-center"
+                >
                   <div
                     v-for="hour in hours"
                     :key="hour"
-                    class="flex-shrink-0 w-[60px] py-1 border-[#C7C7C7] border-t border-b text-center text-sm font-medium flex flex-col items-center"
+                    class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
                     @mouseenter="hoveredHour = hour"
                     @mouseleave="hoveredHour = null"
                   >
                     <p>{{ hour.toString().padStart(2, '0') }}:00</p>
-
-                    <div :style="getHourStyle(hour)" class="w-full h-8 rounded-md relative">
+                    <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
                       <div
-                        class="absolute left-1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
+                        class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
                         v-if="getAppointment(hour)?.startTime"
                       >
                         <span
                           v-if="hoveredHour === hour"
-                          class="flex flex-col items-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                         >
-                          <p>{{ getAppointment(hour)?.startTime }}</p>
-                          <p>-</p>
-                          <p>{{ getAppointment(hour)?.endTime }}</p>
+                          <p class="text-black z-50 h-fit w-full">
+                            {{ getAppointment(hour)?.startTime }}
+                          </p>
+                          <p class="text-black z-50 h-fit w-full">-</p>
+                          <p class="text-black z-50 h-fit w-full">
+                            {{ getAppointment(hour)?.endTime }}
+                          </p>
                         </span>
                       </div>
                     </div>
@@ -232,7 +239,7 @@ const allReservationsDateData = computed(() => ({
             <div class="flex items-end justify-center h-full pt-8 pb-4">
               <button
                 class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-                @click="handleCreateReservations()"
+                @click="handleCreateAppointments()"
               >
                 <span
                   class="absolute -top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-semibold"
@@ -245,57 +252,57 @@ const allReservationsDateData = computed(() => ({
         </template>
       </VDatePicker>
       <div
-        ref="allReservationsRef"
-        v-if="allReservationsOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md py-4"
+        ref="allAppointmentsRef"
+        v-if="allAppointmentsOpened"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md py-4 sm:min-h-[600px] h-full max-h-[600px]"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <AllReservations
+        <AllAppointments
           :appointments="appointments"
-          :data="allReservationsDateData"
-          :allReservationsRef="allReservationsRef"
-          :handleAllReservations="handleAllReservations"
-          :handleCreateReservations="handleCreateReservations"
-          :openUpdateReservations="openUpdateReservations"
-          :handleUpdateReservation="handleUpdateReservation"
+          :data="allAppointmentsDateData"
+          :allAppointmentsRef="allAppointmentsRef"
+          :handleAllAppointments="handleAllAppointments"
+          :handleCreateAppointments="handleCreateAppointments"
+          :handleUpdateAppointment="handleUpdateAppointment"
           :updateAppointments="handleDateChange"
+          @delete-appointment="handleDeleteAppointment"
         />
       </div>
 
       <div
-        ref="createReservationRef"
-        v-if="createReservationsOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full"
+        ref="createAppointmentRef"
+        v-if="createAppointmentsOpened"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <CreateReservation
-          :createReservationRef="createReservationRef"
-          :handleCreateReservations="handleCreateReservations"
+        <CreateAppointment
+          :createAppointmentRef="createAppointmentRef"
+          :handleCreateAppointments="handleCreateAppointments"
           :updateAppointments="handleDateChange"
         />
       </div>
       <div
-        ref="updateReservationRef"
-        v-if="updateReservationOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full"
+        ref="updateAppointmentRef"
+        v-if="updateAppointmentOpened"
+        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <UpdateReservation
+        <UpdateAppointments
           :appointment="updateAppointment"
-          :updateReservationRef="updateReservationRef"
-          :handleUpdateReservation="handleUpdateReservation"
+          :updateAppointmentRef="updateAppointmentRef"
+          :handleUpdateAppointment="handleUpdateAppointment"
           :updateAppointments="handleDateChange"
         />
       </div>
