@@ -127,7 +127,7 @@ const createAppointment = async (e: Event) => {
 <template>
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <div class="relative w-full h-full flex flex-col gap-4">
-      <button class="px-4 cursor-pointer" @click="hideCreateAppointments">
+      <button class="px-4 py-2 cursor-pointer" @click="hideCreateAppointments">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
 

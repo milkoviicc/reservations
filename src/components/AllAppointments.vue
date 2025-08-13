@@ -79,9 +79,7 @@ const updateAppointment = (appointment: Appointment) => {
 </script>
 
 <template>
-  <div
-    class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col justify-evenly"
-  >
+  <div class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col">
     <div class="flex flex-col gap-2">
       <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
         <img src="../assets/arrow-left.png" alt="" width="20" />
@@ -129,12 +127,14 @@ const updateAppointment = (appointment: Appointment) => {
         </ScrollableContainer>
       </div>
     </div>
-    <div class="flex items-end justify-center h-fit pt-8">
+    <div class="flex items-end justify-center h-fit py-4">
       <button
         class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
         @click="handleCreateAppointments()"
       >
-        <span class="absolute -top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal">
+        <span
+          class="absolute top-0 sm:-top-[1px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+        >
           +
         </span>
       </button>

@@ -247,7 +247,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
                 @click="handleCreateAppointments()"
               >
                 <span
-                  class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-semibold"
+                  class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
                 >
                   +
                 </span>
@@ -259,7 +259,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
       <div
         ref="allAppointmentsRef"
         v-if="allAppointmentsOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 rounded-md py-4 h-[100dvh] sm:h-fit overflow-y-hidden"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 pt-2 rounded-md h-full sm:h-fit overflow-y-hidden"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -281,7 +281,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
       <div
         ref="createAppointmentRef"
         v-if="createAppointmentsOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 rounded-md pt-2 w-full sm:h-fit h-[100dvh]"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 pt-2 rounded-md w-full sm:h-fit h-full"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"

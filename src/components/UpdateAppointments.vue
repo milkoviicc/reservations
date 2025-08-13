@@ -89,7 +89,7 @@ const updateAppointment = async (e: Event) => {
 <template>
   <main class="min-h-full h-full w-full sm:max-w-full sm:w-full sm:min-h-[600px]">
     <div class="relative w-full h-full min-h-[600px] flex flex-col gap-4">
-      <button class="px-4 cursor-pointer" @click="hideUpdateAppointments">
+      <button class="px-4 py-2 cursor-pointer" @click="hideUpdateAppointments">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
 
