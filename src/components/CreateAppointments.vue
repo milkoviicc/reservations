@@ -172,7 +172,7 @@ const createAppointment = async (e: Event) => {
       >
         <template #footer>
           <div
-            class="flex flex-col flex-1 sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-2"
+            class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-2"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
@@ -181,7 +181,7 @@ const createAppointment = async (e: Event) => {
                 method="POST"
                 @submit="createAppointment"
               >
-                <div class="flex flex-1 gap-[3px] w-full justify-center px-2">
+                <div class="flex gap-[3px] w-full h-fit justify-center px-2">
                   <div class="flex relative h-fit">
                     <input
                       type="number"

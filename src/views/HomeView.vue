@@ -247,7 +247,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
                 @click="handleCreateAppointments()"
               >
                 <span
-                  class="absolute -top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-semibold"
+                  class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-semibold"
                 >
                   +
                 </span>

@@ -105,7 +105,7 @@ const updateAppointment = async (e: Event) => {
       >
         <template #footer>
           <div
-            class="flex flex-col flex-1 sm:min-h-[200px] sm:h-full items-center justify-between h-full w-full pt-16 sm:pt-8!"
+            class="flex flex-col sm:min-h-[200px] items-center justify-between h-full w-full pt-16 sm:pt-8!"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
@@ -114,7 +114,7 @@ const updateAppointment = async (e: Event) => {
                 method="PUT"
                 @submit="updateAppointment"
               >
-                <div class="flex flex-1 gap-[3px] w-full justify-center px-2">
+                <div class="flex gap-[3px] w-full h-fit justify-center px-2">
                   <div class="flex relative">
                     <input
                       type="number"
