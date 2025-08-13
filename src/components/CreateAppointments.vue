@@ -175,63 +175,65 @@ const createAppointment = async (e: Event) => {
             class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-2"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
               <form
-                class="flex flex-col w-full h-full justify-between"
+                class="flex flex-col w-full h-full justify-evenly sm:justify-between"
                 method="POST"
                 @submit="createAppointment"
               >
-                <div class="flex gap-[3px] w-full h-fit justify-center px-2">
-                  <div class="flex relative h-fit">
-                    <input
-                      type="number"
-                      v-model="appointmentStartingHours"
-                      placeholder="00"
-                      min="1"
-                      max="23"
-                      required
-                      class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Sati</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative h-fit">
-                    <input
-                      type="number"
-                      placeholder="00"
-                      v-model="appointmentStartingMinutes"
-                      min="0"
-                      max="59"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Minute</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">-</p>
-                  <div class="flex relative h-fit">
-                    <input
-                      type="number"
-                      v-model="appointmentEndingHours"
-                      placeholder="00"
-                      min="1"
-                      max="23"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Sati</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative h-fit">
-                    <input
-                      type="number"
-                      v-model="appointmentEndingMinutes"
-                      placeholder="00"
-                      min="0"
-                      max="59"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Minute</p>
+                <div class="flex flex-col gap-2">
+                  <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
+                  <div class="flex gap-[3px] w-full h-fit justify-center px-2">
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="appointmentStartingHours"
+                        placeholder="00"
+                        min="1"
+                        max="23"
+                        required
+                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-16 left-0 text-xs">Sati</p>
+                    </div>
+                    <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        placeholder="00"
+                        v-model="appointmentStartingMinutes"
+                        min="0"
+                        max="59"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-16 left-0 text-xs">Minute</p>
+                    </div>
+                    <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">-</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="appointmentEndingHours"
+                        placeholder="00"
+                        min="1"
+                        max="23"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-16 left-0 text-xs">Sati</p>
+                    </div>
+                    <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="appointmentEndingMinutes"
+                        placeholder="00"
+                        min="0"
+                        max="59"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-16 left-0 text-xs">Minute</p>
+                    </div>
                   </div>
                 </div>
                 <input

@@ -80,7 +80,7 @@ const updateAppointment = (appointment: Appointment) => {
 
 <template>
   <div
-    class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col justify-between"
+    class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col justify-evenly"
   >
     <div class="flex flex-col gap-2">
       <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
@@ -92,7 +92,7 @@ const updateAppointment = (appointment: Appointment) => {
       </div>
       <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
         <p class="text-[#484848] px-4">{{ appointments.length }} mušterija</p>
-        <ScrollableContainer class="flex-col gap-2 px-4 py-1 max-h-[450px] sm:max-h-[300px]">
+        <ScrollableContainer class="flex-col gap-2 px-4 py-1 h-[450px] sm:max-h-[300px]">
           <div v-for="appointment in appointments" :key="appointment.appointmentId">
             <div
               class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
