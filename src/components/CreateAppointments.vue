@@ -125,13 +125,13 @@ const createAppointment = async (e: Event) => {
 </script>
 
 <template>
-  <main class="min-h-full h-full w-full sm:max-w-full sm:w-full">
+  <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <div class="relative w-full h-full flex flex-col gap-4">
       <button class="px-4 cursor-pointer" @click="hideCreateAppointments">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
 
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 !mt-4">
         <div
           class="flex flex-1 gap-4 px-3 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
         >
@@ -166,23 +166,23 @@ const createAppointment = async (e: Event) => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex-1 w-full max-w-[301.6px] min-w-[301.6px] h-full !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
+        class="flex-1 w-full !mt-4 max-w-[301.6px] min-w-[301.6px] h-full !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
           <div
-            class="flex flex-col flex-1 sm:min-h-[200px] items-center justify-between h-full w-full"
+            class="flex flex-col flex-1 sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-2"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
               <form
-                class="flex flex-col justify-between w-full h-full"
+                class="flex flex-col w-full h-full justify-between"
                 method="POST"
                 @submit="createAppointment"
               >
                 <div class="flex flex-1 gap-[3px] w-full justify-center px-2">
-                  <div class="flex relative">
+                  <div class="flex relative h-fit">
                     <input
                       type="number"
                       v-model="appointmentStartingHours"
@@ -195,7 +195,7 @@ const createAppointment = async (e: Event) => {
                     <p class="absolute top-16 left-0 text-xs">Sati</p>
                   </div>
                   <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative">
+                  <div class="flex relative h-fit">
                     <input
                       type="number"
                       placeholder="00"
@@ -208,7 +208,7 @@ const createAppointment = async (e: Event) => {
                     <p class="absolute top-16 left-0 text-xs">Minute</p>
                   </div>
                   <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">-</p>
-                  <div class="flex relative">
+                  <div class="flex relative h-fit">
                     <input
                       type="number"
                       v-model="appointmentEndingHours"
@@ -221,7 +221,7 @@ const createAppointment = async (e: Event) => {
                     <p class="absolute top-16 left-0 text-xs">Sati</p>
                   </div>
                   <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative">
+                  <div class="flex relative h-fit">
                     <input
                       type="number"
                       v-model="appointmentEndingMinutes"
@@ -248,7 +248,7 @@ const createAppointment = async (e: Event) => {
   </main>
 </template>
 
-<style>
+<style scoped>
 .vc-weekdays {
   text-transform: capitalize !important;
 }
@@ -276,6 +276,7 @@ const createAppointment = async (e: Event) => {
 .vc-pane-container {
   display: flex;
   flex-direction: column;
+  height: 100% !important;
 }
 
 input[type='number']::-webkit-inner-spin-button,
@@ -286,6 +287,13 @@ input[type='number']::-webkit-outer-spin-button {
 
 /* Firefox */
 input[type='number'] {
+  appearance: textfield;
   -moz-appearance: textfield;
+}
+
+@media screen and (max-width: 640px) {
+  .vc-pane-container {
+    height: 100% !important;
+  }
 }
 </style>

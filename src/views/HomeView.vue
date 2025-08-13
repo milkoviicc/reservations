@@ -50,6 +50,7 @@ onMounted(() => {
 const brojMusterija = ref(0)
 
 const handleDateChange = async (newDate: Date) => {
+  date.value = newDate
   const { day, month, weekday } = getFormattedDateParts(newDate)
 
   formattedDay.value = day
@@ -66,6 +67,9 @@ const handleDateChange = async (newDate: Date) => {
     if (getAppointments.status === 200) {
       appointments.value = getAppointments.data
       brojMusterija.value = appointments.value.length
+      if (allAppointmentsOpened.value) {
+        allAppointmentsOpened.value = !allAppointmentsOpened.value
+      }
     }
   } catch (error) {
     console.error(error)
@@ -167,20 +171,21 @@ const allAppointmentsDateData = computed(() => ({
 
 const handleDeleteAppointment = (appointmentId: string) => {
   appointments.value = appointments.value.filter((appt) => appt.appointmentId !== appointmentId)
-  console.log('Updated appointments:', appointments.value)
+  allAppointmentsOpened.value = !allAppointmentsOpened.value
+  brojMusterija.value = brojMusterija.value - 1
 }
 </script>
 
 <template>
   <main class="h-[100dvh] overflow-hidden">
-    <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full">
+    <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full flex items-center">
       <VDatePicker
         v-model="date"
         mode="date"
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex flex-col flex-1 h-full min-h-0 pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
+        class="flex flex-col flex-1 h-full min-h-full sm:min-h-fit pt-12 min-w-full max-w-[640px] sm:w-auto box-border homeViewCalendar"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
@@ -254,7 +259,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
       <div
         ref="allAppointmentsRef"
         v-if="allAppointmentsOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md py-4 sm:min-h-[600px] h-full max-h-[600px]"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 rounded-md py-4 h-[100dvh] sm:h-fit overflow-y-hidden"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -276,7 +281,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
       <div
         ref="createAppointmentRef"
         v-if="createAppointmentsOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 rounded-md pt-2 w-full sm:h-fit h-[100dvh]"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -292,7 +297,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
       <div
         ref="updateAppointmentRef"
         v-if="updateAppointmentOpened"
-        class="absolute inset-0 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -342,7 +347,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
 }
 
 @media screen and (max-width: 640px) {
-  .vc-pane-container {
+  .homeViewCalendar .vc-pane-container {
     height: 100dvh !important;
   }
 }

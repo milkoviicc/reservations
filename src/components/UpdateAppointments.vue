@@ -99,13 +99,13 @@ const updateAppointment = async (e: Event) => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex-1 w-full max-w-[301.6px] min-w-[301.6px] h-[400px] !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
+        class="flex-1 w-full !mt-16 sm:mt-10! max-w-[301.6px] min-w-[301.6px] h-[400px] !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
           <div
-            class="flex flex-col flex-1 sm:min-h-[200px] sm:h-full items-center justify-between h-full w-full"
+            class="flex flex-col flex-1 sm:min-h-[200px] sm:h-full items-center justify-between h-full w-full pt-16 sm:pt-8!"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
