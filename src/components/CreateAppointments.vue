@@ -3,8 +3,6 @@ import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
-import { defineProps } from 'vue'
-
 const props = defineProps<{
   createAppointmentRef: HTMLElement | null
   handleCreateAppointments: () => void

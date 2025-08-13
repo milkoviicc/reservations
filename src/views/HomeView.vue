@@ -172,22 +172,22 @@ const handleDeleteAppointment = (appointmentId: string) => {
 </script>
 
 <template>
-  <main class="min-h-full h-full sm:h-fit">
-    <div class="min-h-full h-full max-w-[640px] sm:w-fit sm:max-w-full">
+  <main class="h-[100dvh] overflow-hidden">
+    <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full">
       <VDatePicker
         v-model="date"
         mode="date"
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex flex-col flex-1 h-full min-h-full pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
+        class="flex flex-col flex-1 h-full min-h-0 pt-12 min-w-full max-w-[640px] sm:w-auto box-border"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
-          <div class="w-full h-full max-h-full relative box-border">
+          <div class="w-full h-full flex flex-col justify-between relative box-border">
             <div class="w-full h-full border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border">
-              <div class="w-full h-full flex flex-col px-4 box-border">
+              <div class="w-full h-fit flex flex-col px-4 box-border">
                 <h3 class="text-[#484848] text-xl font-bold">
                   {{ formattedDay }}. {{ formattedMonth }}
                 </h3>
@@ -236,7 +236,7 @@ const handleDeleteAppointment = (appointmentId: string) => {
               </ScrollableContainer>
             </div>
 
-            <div class="flex items-end justify-center h-full pt-8 pb-4">
+            <div class="flex h-full justify-center items-center sm:p-4">
               <button
                 class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
                 @click="handleCreateAppointments()"
@@ -339,5 +339,11 @@ const handleDeleteAppointment = (appointmentId: string) => {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+}
+
+@media screen and (max-width: 640px) {
+  .vc-pane-container {
+    height: 100dvh !important;
+  }
 }
 </style>

@@ -2,7 +2,6 @@
 import { EllipsisVertical } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import axios from 'axios'
-import { defineProps } from 'vue'
 import ScrollableContainer from './ScrollableContainer.vue'
 import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
 import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
@@ -31,7 +30,7 @@ const allAppointmentsRef = ref<HTMLElement | null>(props.allAppointmentsRef)
 const handleAllAppointments = props.handleAllAppointments
 const handleCreateAppointments = props.handleCreateAppointments
 const handleUpdateAppointment = props.handleUpdateAppointment
-const updateAppointments = props.updateAppointments
+// const updateAppointments = props.updateAppointments
 
 const emit = defineEmits<{
   (e: 'delete-appointment', appointmentId: string): void
