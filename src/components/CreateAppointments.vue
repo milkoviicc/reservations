@@ -172,11 +172,11 @@ const createAppointment = async (e: Event) => {
       >
         <template #footer>
           <div
-            class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-2"
+            class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-0"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <form
-                class="flex flex-col w-full h-full justify-evenly sm:justify-between"
+                class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
                 method="POST"
                 @submit="createAppointment"
               >
@@ -239,7 +239,7 @@ const createAppointment = async (e: Event) => {
                 <input
                   type="submit"
                   value="Dodaj termin"
-                  class="w-full bg-[#F54242] text-white py-1 sm:py-3 rounded-b-md cursor-pointer"
+                  class="w-fit bg-[#F54242] text-white px-8 py-1 sm:px-14 sm:py-2 rounded-md cursor-pointer"
                 />
               </form>
             </div>
