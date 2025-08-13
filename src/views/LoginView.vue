@@ -3,11 +3,14 @@ import type { User } from '@/lib/types'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
 const username = ref('')
 const password = ref('')
 
 const authStore = useAuthStore()
+
+const toast = useToast()
 
 const handleLogin = async (e: Event) => {
   e.preventDefault()
@@ -24,33 +27,55 @@ const handleLogin = async (e: Event) => {
 
         authStore.login(user)
 
-        window.location.href = '/'
+        toast.add({
+          severity: 'success',
+          summary: 'Successful login',
+          detail: `Bok ${user.firstName}, dobrodošla.`,
+          life: 3000,
+        })
+
+        setTimeout(() => {
+          window.location.href = '/'
+        }, 1000)
       }
     } catch (error) {
-      console.error(error)
+      console.log(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Pogrešno korisničko ime ili lozinka, molimo pokušajte ponovno.`,
+        life: 3000,
+      })
     }
   }
 }
 </script>
 
 <template>
-  <form class="flex flex-col gap-2" method="POST" @submit="handleLogin">
+  <form
+    class="flex flex-col gap-4 justify-center items-center w-full h-full"
+    method="POST"
+    @submit="handleLogin"
+  >
     <input
       type="text"
       placeholder="Korisničko ime"
-      class="bg-black text-white outline-none rounded-lg px-2"
+      class="bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
       v-model="username"
+      required
     />
     <input
       type="password"
       placeholder="Lozinka"
-      class="bg-black text-white outline-none rounded-lg px-2"
+      class="bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
       v-model="password"
+      required
     />
     <input
       type="submit"
       value="Prijavi se"
-      class="px-2 py-2 bg-black text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
+      class="w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
     />
   </form>
+  <PrimeToast />
 </template>

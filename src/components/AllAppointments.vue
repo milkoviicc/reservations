@@ -8,6 +8,7 @@ import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
 import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
 import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
 import type { Appointment } from '@/lib/types'
+import { useToast } from 'primevue/usetoast'
 
 const props = defineProps<{
   appointments: Appointment[]
@@ -47,6 +48,8 @@ const formattedDay = ref(data.day)
 const formattedMonth = ref(data.month)
 const formattedWeekday = ref(data.weekday)
 
+const toast = useToast()
+
 const hideAppointments = () => {
   if (!allAppointmentsRef.value) return
   allAppointmentsRef.value.classList.add(
@@ -66,7 +69,15 @@ const deleteAppointment = async (appointmentId: string) => {
     const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
 
     if (res.status === 200) {
-      emit('delete-appointment', appointmentId)
+      toast.add({
+        severity: 'success',
+        summary: 'Uspjeh!',
+        detail: `Uspješno si obrisala postojeći termin.`,
+        life: 1500,
+      })
+      setTimeout(() => {
+        emit('delete-appointment', appointmentId)
+      }, 1500)
     }
   } catch (error) {
     console.error(error)
@@ -80,6 +91,7 @@ const updateAppointment = (appointment: Appointment) => {
 
 <template>
   <div class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col">
+    <PrimeToast />
     <div class="flex flex-col gap-2">
       <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
         <img src="../assets/arrow-left.png" alt="" width="20" />

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
@@ -99,6 +100,8 @@ const appointmentStartingMinutes = ref('')
 const appointmentEndingHours = ref('')
 const appointmentEndingMinutes = ref('')
 
+const toast = useToast()
+
 const createAppointment = async (e: Event) => {
   e.preventDefault()
 
@@ -115,16 +118,31 @@ const createAppointment = async (e: Event) => {
     })
 
     if (res.status === 200) {
-      updateAppointments(date.value)
-      handleCreateAppointments()
+      toast.add({
+        severity: 'success',
+        summary: 'Uspjeh!',
+        detail: `Uspješno si kreirala novi termin.`,
+        life: 1500,
+      })
+      setTimeout(() => {
+        updateAppointments(date.value)
+        handleCreateAppointments()
+      }, 1500)
     }
   } catch (error) {
     console.error(error)
+    toast.add({
+      severity: 'success',
+      summary: 'Greška!',
+      detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+      life: 1500,
+    })
   }
 }
 </script>
 
 <template>
+  <PrimeToast />
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <div class="relative w-full h-full flex flex-col gap-4">
       <button class="px-4 py-2 cursor-pointer" @click="hideCreateAppointments">

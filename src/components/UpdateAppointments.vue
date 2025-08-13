@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from '@/lib/types'
 import axios from 'axios'
+import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
@@ -58,6 +59,8 @@ const startingMinutes = ref()
 const endingHour = ref()
 const endingMinutes = ref()
 
+const toast = useToast()
+
 const updateAppointment = async (e: Event) => {
   e.preventDefault()
   if (appointment.value) {
@@ -73,14 +76,28 @@ const updateAppointment = async (e: Event) => {
         cost: appointment.value.cost,
       })
 
-      console.log('after req')
       if (res.status === 200) {
-        console.log('after 200')
-        updateAppointments(date.value)
-        handleUpdateAppointment(appointment.value)
+        toast.add({
+          severity: 'success',
+          summary: 'Uspjeh!',
+          detail: `Uspješno si ažurirala postojeći termin.`,
+          life: 1500,
+        })
+        setTimeout(() => {
+          updateAppointments(date.value)
+          if (appointment.value) {
+            handleUpdateAppointment(appointment.value)
+          }
+        }, 1500)
       }
     } catch (error) {
       console.error(error)
+      toast.add({
+        severity: 'success',
+        summary: 'Greška!',
+        detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+        life: 1500,
+      })
     }
   }
 }

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-// import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,7 +10,9 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      //meta: { requiresAuth: true,},
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/login',
@@ -20,7 +22,6 @@ const router = createRouter({
   ],
 })
 
-/*
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   authStore.loadFromLocalStorage()
@@ -31,6 +32,5 @@ router.beforeEach((to, _from, next) => {
     next()
   }
 })
-  */
 
 export default router
