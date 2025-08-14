@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useAppointments } from '@/composables/useAppointment'
 import type { Appointment } from '@/lib/types'
-import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
+
+const { updateAppointment } = useAppointments()
 
 const props = defineProps<{
   appointment: Appointment | undefined
@@ -61,37 +63,35 @@ const endingMinutes = ref()
 
 const toast = useToast()
 
-const updateAppointment = async (e: Event) => {
+const callUpdateAppointment = async (e: Event) => {
   e.preventDefault()
   if (appointment.value) {
-    try {
-      const res = await axios.put('http://91.99.227.117/api/appointments', {
-        appointmentId: appointment.value.appointmentId,
-        clientFirstName: appointment.value.clientFirstName,
-        clientLastName: appointment.value.clientLastName,
-        appointmentType: appointment.value.appointmentType,
-        date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
-        startTime: `${startingHour.value}:${startingMinutes.value}:00`,
-        endTime: `${endingHour.value}:${endingMinutes.value}:00`,
-        cost: appointment.value.cost,
-      })
+    const updatedAppointment: Appointment = {
+      appointmentId: appointment.value.appointmentId,
+      clientFirstName: appointment.value.clientFirstName,
+      clientLastName: appointment.value.clientLastName,
+      appointmentType: appointment.value.appointmentType,
+      date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
+      startTime: `${startingHour.value}:${startingMinutes.value}:00`,
+      endTime: `${endingHour.value}:${endingMinutes.value}:00`,
+      cost: appointment.value.cost,
+    }
+    const res = await updateAppointment(updatedAppointment)
 
-      if (res.status === 200) {
-        toast.add({
-          severity: 'success',
-          summary: 'Uspjeh!',
-          detail: `Uspješno si ažurirala postojeći termin.`,
-          life: 1500,
-        })
-        setTimeout(() => {
-          updateAppointments(date.value)
-          if (appointment.value) {
-            handleUpdateAppointment(appointment.value)
-          }
-        }, 1500)
-      }
-    } catch (error) {
-      console.error(error)
+    if (res === 200) {
+      toast.add({
+        severity: 'success',
+        summary: 'Uspjeh!',
+        detail: `Uspješno si ažurirala postojeći termin.`,
+        life: 1500,
+      })
+      setTimeout(() => {
+        updateAppointments(date.value)
+        if (appointment.value) {
+          handleUpdateAppointment(appointment.value)
+        }
+      }, 1500)
+    } else {
       toast.add({
         severity: 'success',
         summary: 'Greška!',
@@ -129,7 +129,7 @@ const updateAppointment = async (e: Event) => {
               <form
                 class="flex flex-col justify-between w-full h-full"
                 method="PUT"
-                @submit="updateAppointment"
+                @submit="callUpdateAppointment"
               >
                 <div class="flex gap-[3px] w-full h-fit justify-center px-2">
                   <div class="flex relative">

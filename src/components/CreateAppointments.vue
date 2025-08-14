@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import axios from 'axios'
+import { useAppointments } from '@/composables/useAppointment'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
@@ -13,6 +13,8 @@ const props = defineProps<{
 const createAppointmentRef = ref<HTMLElement | null>(props.createAppointmentRef)
 const handleCreateAppointments = props.handleCreateAppointments
 const updateAppointments = props.updateAppointments
+
+const { createAppointment } = useAppointments()
 
 watch(
   () => props.createAppointmentRef,
@@ -102,35 +104,33 @@ const appointmentEndingMinutes = ref('')
 
 const toast = useToast()
 
-const createAppointment = async (e: Event) => {
+const createNewAppointment = async (e: Event) => {
   e.preventDefault()
 
   const appointmentDate = getDate()
-  try {
-    const res = await axios.post('http://91.99.227.117/api/appointments', {
-      clientFirstName: clientName.value.trim().split(' ')[0] || '',
-      clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
-      appointmentType: appointmentType.value,
-      date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
-      startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
-      endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value}`,
-      cost: 50,
-    })
+  const newAppointment = {
+    clientFirstName: clientName.value.trim().split(' ')[0] || '',
+    clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
+    appointmentType: appointmentType.value,
+    date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
+    startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
+    endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value}`,
+    cost: 50,
+  }
+  const res = await createAppointment(newAppointment)
 
-    if (res.status === 200) {
-      toast.add({
-        severity: 'success',
-        summary: 'Uspjeh!',
-        detail: `Uspješno si kreirala novi termin.`,
-        life: 1500,
-      })
-      setTimeout(() => {
-        updateAppointments(date.value)
-        handleCreateAppointments()
-      }, 1500)
-    }
-  } catch (error) {
-    console.error(error)
+  if (res === 200) {
+    toast.add({
+      severity: 'success',
+      summary: 'Uspjeh!',
+      detail: `Uspješno si kreirala novi termin.`,
+      life: 1500,
+    })
+    setTimeout(() => {
+      updateAppointments(date.value)
+      handleCreateAppointments()
+    }, 1500)
+  } else {
     toast.add({
       severity: 'success',
       summary: 'Greška!',
@@ -196,7 +196,7 @@ const createAppointment = async (e: Event) => {
               <form
                 class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
                 method="POST"
-                @submit="createAppointment"
+                @submit="createNewAppointment"
               >
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>

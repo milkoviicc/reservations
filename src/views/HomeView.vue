@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { fetchDailyAppointments } from '@/api/appointments'
 import AllAppointments from '@/components/AllAppointments.vue'
 import CreateAppointment from '@/components/CreateAppointments.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateAppointments from '@/components/UpdateAppointments.vue'
+import WeeklyAppointments from '@/components/WeeklyAppointments.vue'
 import type { Appointment } from '@/lib/types'
-import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
 
 const date = ref(new Date())
@@ -57,22 +58,12 @@ const handleDateChange = async (newDate: Date) => {
   formattedMonth.value = month
   formattedWeekday.value = weekday
 
-  try {
-    const formattedDate = newDate.toISOString().split('T')[0]
-
-    const getAppointments = await axios.get(
-      `http://91.99.227.117/api/appointments/date/${formattedDate}`,
-    )
-
-    if (getAppointments.status === 200) {
-      appointments.value = getAppointments.data
-      brojMusterija.value = appointments.value.length
-      if (allAppointmentsOpened.value) {
-        allAppointmentsOpened.value = !allAppointmentsOpened.value
-      }
+  if (currentDisplay.value === 'dan') {
+    appointments.value = await fetchDailyAppointments(newDate)
+    brojMusterija.value = appointments.value.length
+    if (allAppointmentsOpened.value) {
+      allAppointmentsOpened.value = !allAppointmentsOpened.value
     }
-  } catch (error) {
-    console.error(error)
   }
 }
 
@@ -88,12 +79,19 @@ function getHourStyle(hour: number): Record<string, string> {
   const hourStartMin = hour * 60
   const hourEndMin = hourStartMin + 60
 
+  let durationMinutes = 0
+
   appointments.value.forEach((appt) => {
     const [sh, sm] = appt.startTime.split(':').map(Number)
     const [eh, em] = appt.endTime.split(':').map(Number)
 
     const apptStart = sh * 60 + sm
     const apptEnd = eh * 60 + em
+
+    const start = new Date(appt.startTime)
+    const end = new Date(appt.endTime)
+
+    durationMinutes = (end.getTime() - start.getTime()) / 60000
 
     // Find overlap within the current hour
     const overlapStart = Math.max(hourStartMin, apptStart)
@@ -125,6 +123,7 @@ function getHourStyle(hour: number): Record<string, string> {
     #89EB7C ${redEndPercent}%,
     #89EB7C 100%
   )`,
+    width: `${durationMinutes * pxPerMinute}px`,
   }
 }
 const hoveredHour = ref<number | null>(null)
@@ -145,6 +144,7 @@ function getAppointment(hour: number) {
   })
 }
 
+const pxPerMinute = 1 // 1px per minute
 const handleAllAppointments = () => {
   allAppointmentsOpened.value = !allAppointmentsOpened.value
 }
@@ -174,88 +174,126 @@ const handleDeleteAppointment = (appointmentId: string) => {
   allAppointmentsOpened.value = !allAppointmentsOpened.value
   brojMusterija.value = brojMusterija.value - 1
 }
+
+const currentDisplay = ref('dan')
+
+const changeCalendarDisplay = (display: string) => {
+  currentDisplay.value = display
+}
 </script>
 
 <template>
   <main class="h-[100dvh] overflow-hidden">
     <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full flex items-center">
-      <VDatePicker
-        v-model="date"
-        mode="date"
-        locale="hr"
-        :masks="{ weekdays: 'WWW', title: 'MMMM' }"
-        :color="selectedColor"
-        class="flex flex-col flex-1 h-full min-h-full sm:min-h-fit pt-12 min-w-full max-w-[640px] sm:w-auto box-border homeViewCalendar"
-        @update:model-value="handleDateChange"
-        disable-page-swipe
-      >
-        <template #footer>
-          <div class="w-full h-full flex flex-col justify-between relative box-border">
-            <div class="w-full h-full border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border">
-              <div class="w-full h-fit flex flex-col px-4 box-border">
-                <h3 class="text-[#484848] text-xl font-bold">
-                  {{ formattedDay }}. {{ formattedMonth }}
-                </h3>
-                <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
-              </div>
+      <div class="bg-white rounded-md w-full h-full sm:h-fit max-w-[640px] sm:w-fit sm:max-w-full">
+        <div class="flex gap-2 pt-16 pb-4 sm:py-4 text-black justify-center">
+          <button
+            @click="changeCalendarDisplay('dan')"
+            class="cursor-pointer text-lg text-[#7F7F7F]"
+            :class="{
+              'underline underline-offset-4 font-semibold text-black': currentDisplay === 'dan',
+            }"
+          >
+            Dan
+          </button>
+          <h1 class="text-xl text-[#7F7F7F]">|</h1>
+          <button
+            @click="changeCalendarDisplay('tjedan')"
+            class="cursor-pointer text-lg text-[#7F7F7F]"
+            :class="{
+              'underline underline-offset-4 font-semibold text-black': currentDisplay === 'tjedan',
+            }"
+          >
+            Tjedan
+          </button>
+        </div>
 
-              <div class="w-full flex justify-between pt-4 px-4 box-border">
-                <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
-                <button class="underline cursor-pointer" @click="handleAllAppointments">
-                  Svi termini
-                </button>
-              </div>
-              <ScrollableContainer :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px]'">
-                <div
-                  class="w-full px-[1px] py-1 text-center text-sm font-medium flex gap-[3px] items-center"
-                >
+        <VDatePicker
+          v-model="date"
+          mode="date"
+          locale="hr"
+          :masks="{ weekdays: 'WWW', title: 'MMMM' }"
+          :color="selectedColor"
+          class="flex flex-col h-full min-h-full sm:min-h-fit pt-3 min-w-full max-w-[640px] sm:w-auto homeViewCalendar"
+          @update:model-value="handleDateChange"
+          disable-page-swipe
+          v-if="currentDisplay === 'dan'"
+        >
+          <template #footer>
+            <div class="w-full h-full flex flex-col justify-between relative box-border">
+              <div class="w-full h-full border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border">
+                <div class="w-full h-fit flex flex-col px-4 box-border">
+                  <h3 class="text-[#484848] text-xl font-bold">
+                    {{ formattedDay }}. {{ formattedMonth }}
+                  </h3>
+                  <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
+                </div>
+
+                <div class="w-full flex justify-between pt-4 px-4 box-border">
+                  <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
+                  <button class="underline cursor-pointer" @click="handleAllAppointments">
+                    Svi termini
+                  </button>
+                </div>
+                <ScrollableContainer :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px]'">
                   <div
-                    v-for="hour in hours"
-                    :key="hour"
-                    class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
-                    @mouseenter="hoveredHour = hour"
-                    @mouseleave="hoveredHour = null"
+                    class="w-full px-[1px] py-1 text-center text-sm font-medium flex gap-[3px] items-center"
                   >
-                    <p>{{ hour.toString().padStart(2, '0') }}:00</p>
-                    <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
-                      <div
-                        class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
-                        v-if="getAppointment(hour)?.startTime"
-                      >
-                        <span
-                          v-if="hoveredHour === hour"
-                          class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                    <div
+                      v-for="hour in hours"
+                      :key="hour"
+                      class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
+                      @mouseenter="hoveredHour = hour"
+                      @mouseleave="hoveredHour = null"
+                    >
+                      <p>{{ hour.toString().padStart(2, '0') }}:00</p>
+                      <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
+                        <div
+                          class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
+                          v-if="getAppointment(hour)?.startTime"
                         >
-                          <p class="text-black z-50 h-fit w-full">
-                            {{ getAppointment(hour)?.startTime }}
-                          </p>
-                          <p class="text-black z-50 h-fit w-full">-</p>
-                          <p class="text-black z-50 h-fit w-full">
-                            {{ getAppointment(hour)?.endTime }}
-                          </p>
-                        </span>
+                          <span
+                            v-if="hoveredHour === hour"
+                            class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          >
+                            <p class="text-black z-50 h-fit w-full">
+                              {{ getAppointment(hour)?.startTime }}
+                            </p>
+                            <p class="text-black z-50 h-fit w-full">-</p>
+                            <p class="text-black z-50 h-fit w-full">
+                              {{ getAppointment(hour)?.endTime }}
+                            </p>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </ScrollableContainer>
-            </div>
+                </ScrollableContainer>
+              </div>
 
-            <div class="flex h-full justify-center items-center sm:p-4">
-              <button
-                class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-                @click="handleCreateAppointments()"
-              >
-                <span
-                  class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+              <div class="flex h-full justify-center items-center sm:p-4">
+                <button
+                  class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
+                  @click="handleCreateAppointments()"
                 >
-                  +
-                </span>
-              </button>
+                  <span
+                    class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+                  >
+                    +
+                  </span>
+                </button>
+              </div>
             </div>
-          </div>
-        </template>
-      </VDatePicker>
+          </template>
+        </VDatePicker>
+        <div
+          v-if="currentDisplay === 'tjedan'"
+          class="w-full max-w-[550px] h-full sm:min-h-fit flex flex-col justify-between"
+        >
+          <WeeklyAppointments :handleCreateAppointments="handleCreateAppointments" />
+        </div>
+      </div>
+
       <div
         ref="allAppointmentsRef"
         v-if="allAppointmentsOpened"
@@ -332,6 +370,10 @@ const handleDeleteAppointment = (appointmentId: string) => {
 .vc-arrow,
 .vc-title {
   background-color: transparent !important;
+}
+
+.vc-bordered {
+  border-top: none !important;
 }
 
 .vc-container,

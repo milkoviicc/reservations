@@ -1,0 +1,59 @@
+import { formatForApi } from '@/helpers/dataHelpers'
+import type { Appointment } from '@/lib/types'
+import axios from 'axios'
+
+// src/api/appointments.ts
+export const fetchWeeklyAppointments = async (startDate: Date, endDate: Date) => {
+  try {
+    const res = await axios.get(
+      `http://91.99.227.117/api/appointments/date-range?startDate=${formatForApi(startDate)}&endDate=${formatForApi(endDate)}`,
+    )
+    if (res.status === 200) {
+      return res.data
+    }
+  } catch {
+    throw new Error('Failed to fetch weekly appointments')
+  }
+}
+
+export const fetchDailyAppointments = async (date: Date) => {
+  const formattedDate = date.toISOString().split('T')[0]
+  try {
+    const res = await axios.get(`http://91.99.227.117/api/appointments/date/${formattedDate}`)
+
+    if (res.status === 200) {
+      return res.data
+    }
+  } catch {
+    throw new Error('Failed to fetch appointments')
+  }
+}
+
+export const createAppointmentApi = async (newAppointment: {
+  clientFirstName: string
+  clientLastName: string
+  appointmentType: string
+  date: string
+  startTime: string
+  endTime: string
+  cost: number
+}) => {
+  try {
+    const res = await axios.post('http://91.99.227.117/api/appointments', newAppointment)
+    return res.status
+  } catch {
+    throw new Error('Failed to create appointment')
+  }
+}
+
+export const updateAppointmentApi = async (appointment: Appointment) => {
+  const res = await axios.put('http://91.99.227.117/api/appointments', appointment)
+
+  return res.status
+}
+
+export const deleteAppointmentApi = async (appointmentId: string) => {
+  const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
+
+  return res.status
+}

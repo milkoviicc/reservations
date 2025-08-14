@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { EllipsisVertical } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
-import axios from 'axios'
 import ScrollableContainer from './ScrollableContainer.vue'
 import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
 import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
@@ -9,6 +8,7 @@ import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
 import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
 import type { Appointment } from '@/lib/types'
 import { useToast } from 'primevue/usetoast'
+import { useAppointments } from '@/composables/useAppointment'
 
 const props = defineProps<{
   appointments: Appointment[]
@@ -32,6 +32,8 @@ const handleAllAppointments = props.handleAllAppointments
 const handleCreateAppointments = props.handleCreateAppointments
 const handleUpdateAppointment = props.handleUpdateAppointment
 // const updateAppointments = props.updateAppointments
+
+const { deleteAppointment } = useAppointments()
 
 const emit = defineEmits<{
   (e: 'delete-appointment', appointmentId: string): void
@@ -64,23 +66,18 @@ const hideAppointments = () => {
   }, 200)
 }
 
-const deleteAppointment = async (appointmentId: string) => {
-  try {
-    const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
-
-    if (res.status === 200) {
-      toast.add({
-        severity: 'success',
-        summary: 'Uspjeh!',
-        detail: `Uspješno si obrisala postojeći termin.`,
-        life: 1500,
-      })
-      setTimeout(() => {
-        emit('delete-appointment', appointmentId)
-      }, 1500)
-    }
-  } catch (error) {
-    console.error(error)
+const callDeleteAppointment = async (appointmentId: string) => {
+  const res = await deleteAppointment(appointmentId)
+  if (res === 200) {
+    toast.add({
+      severity: 'success',
+      summary: 'Uspjeh!',
+      detail: `Uspješno si obrisala postojeći termin.`,
+      life: 1500,
+    })
+    setTimeout(() => {
+      emit('delete-appointment', appointmentId)
+    }, 1500)
   }
 }
 
@@ -125,7 +122,7 @@ const updateAppointment = (appointment: Appointment) => {
                 /></DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem
-                    @click="deleteAppointment(appointment.appointmentId)"
+                    @click="callDeleteAppointment(appointment.appointmentId)"
                     class="cursor-pointer"
                     >Obriši</DropdownMenuItem
                   >
