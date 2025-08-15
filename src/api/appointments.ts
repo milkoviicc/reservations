@@ -52,7 +52,7 @@ export const createAppointmentApi = async (newAppointment: {
 export const updateAppointmentApi = async (appointment: Appointment) => {
   try {
     const res = await axios.put('http://91.99.227.117/api/appointments', appointment)
-    return res.status
+    return res
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error

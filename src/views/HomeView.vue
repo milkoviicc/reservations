@@ -63,7 +63,7 @@ const changeCalendarDisplay = (display: string) => {
 
 const pxPerMinute = 1
 const workDayStart = '09:00'
-const workDayEnd = '19:00'
+const workDayEnd = '20:00'
 
 // compute total width of the workday (in px)
 const workDayTotalWidthPx = computed(() => {
@@ -72,7 +72,7 @@ const workDayTotalWidthPx = computed(() => {
 
 const hourTicks = computed(() => {
   const startH = Number(workDayStart.split(':')[0])
-  const hoursCount = Math.floor((timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) / 60) + 1
+  const hoursCount = Math.floor((timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) / 60)
   return Array.from({ length: hoursCount }, (_, i) => startH + i)
 })
 
@@ -135,7 +135,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
   <main class="h-[100dvh] overflow-hidden">
     <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full flex items-center">
       <div class="bg-white rounded-md w-full h-full sm:h-fit max-w-[640px] sm:w-fit sm:max-w-full">
-        <div class="flex gap-2 pt-16 pb-4 sm:py-4 text-black justify-center">
+        <div class="flex gap-2 pt-8 pb-4 sm:py-4 text-black justify-center">
           <button
             @click="changeCalendarDisplay('dan')"
             class="cursor-pointer text-lg text-[#7F7F7F]"
@@ -207,7 +207,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                       :style="{ width: workDayTotalWidthPx + 'px' }"
                       class="h-14 flex items-center py-1"
                     >
-                      <div class="flex gap-1">
+                      <div class="flex gap-1 w-full px-2">
                         <div
                           v-for="(block, idx) in dailyBlocks"
                           :key="idx"
@@ -326,6 +326,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
 .vc-red {

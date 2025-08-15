@@ -3,10 +3,12 @@ import { useAppointments } from '@/composables/useAppointment'
 import {
   appointmentToUpdate,
   handleUpdateAppointment,
+  toggleUpdateAppointmentView,
   updateAppointmentRef,
 } from '@/helpers/appointmentsRefHelper'
 import { formatForApi } from '@/helpers/dataHelpers'
 import type { Appointment } from '@/lib/types'
+import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
@@ -68,26 +70,35 @@ const callUpdateAppointment = async (e: Event) => {
     }
     const res = await updateAppointment(updatedAppointment)
 
-    if (res === 200) {
+    if (res.status === 200) {
       toast.add({
         severity: 'success',
         summary: 'Uspjeh!',
-        detail: `Uspješno si ažurirala postojeći termin.`,
+        detail: `Uspješno si kreirala novi termin.`,
         life: 1500,
       })
+
       setTimeout(() => {
         updateAppointments(date.value)
-        if (appointmentToUpdate.value) {
-          handleUpdateAppointment(appointmentToUpdate.value)
-        }
+        toggleUpdateAppointmentView()
       }, 1500)
     } else {
-      toast.add({
-        severity: 'success',
-        summary: 'Greška!',
-        detail: `Došlo je do greške, molimo pokušajte ponovno.`,
-        life: 1500,
-      })
+      if (axios.isAxiosError(res)) {
+        const endTimeErr = res.response?.data?.errors?.EndTime
+        if (endTimeErr === 'End time must be later than start time.') {
+          toast.add({
+            severity: 'error',
+            summary: 'Greška!',
+            detail: `Vrijeme završetka termina mora biti nakon početka termina.`,
+          })
+        } else {
+          toast.add({
+            severity: 'error',
+            summary: 'Greška!',
+            detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+          })
+        }
+      }
     }
   }
 }
@@ -111,73 +122,73 @@ const callUpdateAppointment = async (e: Event) => {
         disable-page-swipe
       >
         <template #footer>
-          <div
-            class="flex flex-col sm:min-h-[200px] items-center justify-between h-full w-full pt-16 sm:pt-8!"
-          >
+          <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <h3 class="text-[#484848] text-xl sm:pt-2">Odaberi vrijeme</h3>
               <form
-                class="flex flex-col justify-between w-full h-full"
+                class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
                 method="PUT"
                 @submit="callUpdateAppointment"
               >
-                <div class="flex gap-[3px] w-full h-fit justify-center px-2">
-                  <div class="flex relative">
-                    <input
-                      type="number"
-                      v-model="startingHour"
-                      placeholder="00"
-                      min="1"
-                      max="23"
-                      required
-                      class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Sati</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative">
-                    <input
-                      type="number"
-                      placeholder="00"
-                      v-model="startingMinutes"
-                      min="0"
-                      max="59"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Minute</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">-</p>
-                  <div class="flex relative">
-                    <input
-                      type="number"
-                      v-model="endingHour"
-                      placeholder="00"
-                      min="1"
-                      max="23"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Sati</p>
-                  </div>
-                  <p class="text-6xl h-12 sm:h-16 flex sm:pt-2 leading-8">:</p>
-                  <div class="flex relative">
-                    <input
-                      type="number"
-                      v-model="endingMinutes"
-                      placeholder="00"
-                      min="0"
-                      max="59"
-                      required
-                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
-                    />
-                    <p class="absolute top-16 left-0 text-xs">Minute</p>
+                <div class="flex flex-col gap-2">
+                  <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
+                  <div class="flex gap-[3px] w-full h-fit justify-center px-2">
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="startingHour"
+                        placeholder="00"
+                        min="1"
+                        max="23"
+                        required
+                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
+                    </div>
+                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">:</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        placeholder="00"
+                        v-model="startingMinutes"
+                        min="0"
+                        max="59"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
+                    </div>
+                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">-</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="endingHour"
+                        placeholder="00"
+                        min="1"
+                        max="23"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
+                    </div>
+                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">:</p>
+                    <div class="flex relative h-fit">
+                      <input
+                        type="number"
+                        v-model="endingMinutes"
+                        placeholder="00"
+                        min="0"
+                        max="59"
+                        required
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                      />
+                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
+                    </div>
                   </div>
                 </div>
                 <input
                   type="submit"
-                  value="Spremi Promjene"
-                  class="w-full bg-[#F54242] text-white py-1 sm:py-3 rounded-b-md cursor-pointer"
+                  value="Ažuriraj termin"
+                  class="w-fit bg-[#F54242] text-white px-8 py-1 sm:px-14 sm:py-2 rounded-md cursor-pointer"
                 />
               </form>
             </div>
@@ -231,5 +242,6 @@ input[type='number']::-webkit-outer-spin-button {
 /* Firefox */
 input[type='number'] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>
