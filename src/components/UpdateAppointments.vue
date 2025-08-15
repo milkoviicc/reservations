@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
+import {
+  appointmentToUpdate,
+  handleUpdateAppointment,
+  updateAppointmentRef,
+} from '@/helpers/appointmentsRefHelper'
+import { formatForApi } from '@/helpers/dataHelpers'
 import type { Appointment } from '@/lib/types'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
@@ -8,19 +14,13 @@ const date = ref(new Date())
 const { updateAppointment } = useAppointments()
 
 const props = defineProps<{
-  appointment: Appointment | undefined
-  updateAppointmentRef: HTMLElement | null
-  handleUpdateAppointment: (appointment: Appointment) => void
   updateAppointments: (newDate: Date) => void
 }>()
 
-const appointment = ref<Appointment | undefined>(props.appointment)
-const updateAppointmentRef = ref<HTMLElement | null>(props.updateAppointmentRef)
-const handleUpdateAppointment = props.handleUpdateAppointment
 const updateAppointments = props.updateAppointments
 
 watch(
-  () => props.updateAppointmentRef,
+  () => updateAppointmentRef,
   (newVal) => {
     updateAppointmentRef.value = newVal || null
   },
@@ -37,23 +37,13 @@ onMounted(() => {
 const newFormattedDate = ref()
 
 const handleDateChange = (newDate: Date) => {
-  newFormattedDate.value = newDate.toISOString().split('T')[0]
+  newFormattedDate.value = formatForApi(newDate)
 }
 
 const hideUpdateAppointments = () => {
-  if (!updateAppointmentRef.value) return
-  updateAppointmentRef.value.classList.add(
-    '!opacity-0',
-    'transform',
-    'translate-x-[100px]',
-    'transition-all',
-    'duration-200',
-  )
-  setTimeout(() => {
-    if (appointment.value) {
-      handleUpdateAppointment(appointment.value)
-    }
-  }, 200)
+  if (appointmentToUpdate.value) {
+    handleUpdateAppointment(appointmentToUpdate.value)
+  }
 }
 
 const startingHour = ref()
@@ -65,16 +55,16 @@ const toast = useToast()
 
 const callUpdateAppointment = async (e: Event) => {
   e.preventDefault()
-  if (appointment.value) {
+  if (appointmentToUpdate.value) {
     const updatedAppointment: Appointment = {
-      appointmentId: appointment.value.appointmentId,
-      clientFirstName: appointment.value.clientFirstName,
-      clientLastName: appointment.value.clientLastName,
-      appointmentType: appointment.value.appointmentType,
+      appointmentId: appointmentToUpdate.value.appointmentId,
+      clientFirstName: appointmentToUpdate.value.clientFirstName,
+      clientLastName: appointmentToUpdate.value.clientLastName,
+      appointmentType: appointmentToUpdate.value.appointmentType,
       date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
       startTime: `${startingHour.value}:${startingMinutes.value}:00`,
       endTime: `${endingHour.value}:${endingMinutes.value}:00`,
-      cost: appointment.value.cost,
+      cost: appointmentToUpdate.value.cost,
     }
     const res = await updateAppointment(updatedAppointment)
 
@@ -87,8 +77,8 @@ const callUpdateAppointment = async (e: Event) => {
       })
       setTimeout(() => {
         updateAppointments(date.value)
-        if (appointment.value) {
-          handleUpdateAppointment(appointment.value)
+        if (appointmentToUpdate.value) {
+          handleUpdateAppointment(appointmentToUpdate.value)
         }
       }, 1500)
     } else {

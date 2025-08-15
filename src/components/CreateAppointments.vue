@@ -1,23 +1,21 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
+import { createAppointmentRef, togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
+import { getDate, getFormattedDateParts } from '@/helpers/dataHelpers'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
 
 const props = defineProps<{
-  createAppointmentRef: HTMLElement | null
-  handleCreateAppointments: () => void
   updateAppointments: (newDate: Date) => void
 }>()
 
-const createAppointmentRef = ref<HTMLElement | null>(props.createAppointmentRef)
-const handleCreateAppointments = props.handleCreateAppointments
 const updateAppointments = props.updateAppointments
 
 const { createAppointment } = useAppointments()
 
 watch(
-  () => props.createAppointmentRef,
+  () => createAppointmentRef,
   (newVal) => {
     createAppointmentRef.value = newVal || null
   },
@@ -27,31 +25,6 @@ const selectedColor = ref('red')
 const formattedDay = ref<number | null>(null)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
-
-const getFormattedDateParts = (date: Date) => {
-  const day = date.getDate() // e.g., 15
-
-  const month = date.toLocaleDateString('hr-HR', {
-    month: 'long',
-  })
-
-  const weekday = date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-  })
-
-  const year = date.toLocaleDateString('hr-HR', {
-    year: 'numeric',
-  })
-
-  const uppercase = (str: string) => str.toUpperCase()
-
-  return {
-    day,
-    month: uppercase(month),
-    weekday: uppercase(weekday),
-    year: year,
-  }
-}
 
 onMounted(() => {
   if (date.value) {
@@ -67,34 +40,6 @@ const handleDateChange = (newDate: Date) => {
   formattedWeekday.value = weekday
 }
 
-const getDate = () => {
-  const day = String(date.value.getDate()).padStart(2, '0')
-  const month = String(date.value.getMonth() + 1).padStart(2, '0')
-  const year = date.value.getFullYear()
-
-  return { day, year, month }
-}
-
-onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
-  }
-})
-
-const hideCreateAppointments = () => {
-  if (!createAppointmentRef.value) return
-  createAppointmentRef.value.classList.add(
-    '!opacity-0',
-    'transform',
-    'translate-x-[100px]',
-    'transition-all',
-    'duration-200',
-  )
-  setTimeout(() => {
-    handleCreateAppointments()
-  }, 200)
-}
-
 const appointmentType = ref('')
 const clientName = ref('')
 const appointmentStartingHours = ref('')
@@ -107,7 +52,7 @@ const toast = useToast()
 const createNewAppointment = async (e: Event) => {
   e.preventDefault()
 
-  const appointmentDate = getDate()
+  const appointmentDate = getDate(date)
   const newAppointment = {
     clientFirstName: clientName.value.trim().split(' ')[0] || '',
     clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
@@ -128,7 +73,7 @@ const createNewAppointment = async (e: Event) => {
     })
     setTimeout(() => {
       updateAppointments(date.value)
-      handleCreateAppointments()
+      togleCreateAppointmentView()
     }, 1500)
   } else {
     toast.add({
@@ -145,7 +90,7 @@ const createNewAppointment = async (e: Event) => {
   <PrimeToast />
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <div class="relative w-full h-full flex flex-col gap-4">
-      <button class="px-4 py-2 cursor-pointer" @click="hideCreateAppointments">
+      <button class="px-4 py-2 cursor-pointer" @click="togleCreateAppointmentView()">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
 

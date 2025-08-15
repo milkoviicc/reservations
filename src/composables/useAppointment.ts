@@ -1,5 +1,5 @@
 // src/composables/useAppointments.ts
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   fetchWeeklyAppointments,
   fetchDailyAppointments,
@@ -10,7 +10,10 @@ import {
 import type { Appointment } from '@/lib/types'
 
 const weeklyAppointments = ref<Appointment[]>([])
-const allAppointments = ref<Appointment[]>([])
+const dailyAppointments = ref<Appointment[]>([])
+const brojMusterija = computed((): number => {
+  return dailyAppointments.value.length
+})
 
 export function useAppointments() {
   const getWeeklyAppointments = async (startDate: Date, endTime: Date) => {
@@ -18,7 +21,7 @@ export function useAppointments() {
   }
 
   const getDailyAppointments = async (date: Date) => {
-    allAppointments.value = await fetchDailyAppointments(date)
+    dailyAppointments.value = await fetchDailyAppointments(date)
   }
 
   const createAppointment = async (newAppointment: {
@@ -46,7 +49,8 @@ export function useAppointments() {
 
   return {
     weeklyAppointments,
-    allAppointments,
+    dailyAppointments,
+    brojMusterija,
     getWeeklyAppointments,
     getDailyAppointments,
     createAppointment,

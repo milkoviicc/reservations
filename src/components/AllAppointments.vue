@@ -6,41 +6,30 @@ import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
 import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
 import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
 import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
-import type { Appointment } from '@/lib/types'
 import { useToast } from 'primevue/usetoast'
 import { useAppointments } from '@/composables/useAppointment'
+import {
+  allAppointmentsRef,
+  handleUpdateAppointment,
+  toggleAllAppointmentsView,
+  togleCreateAppointmentView,
+} from '@/helpers/appointmentsRefHelper'
 
 const props = defineProps<{
-  appointments: Appointment[]
   data: {
     date: Date
     day: number
     month: string
     weekday: string
   }
-  allAppointmentsRef: HTMLElement | null
-  handleAllAppointments: () => void
-  handleCreateAppointments: () => void
-  handleUpdateAppointment: (appointment: Appointment) => void
-  updateAppointments: (newDate: Date) => void
 }>()
 
-const appointments = ref(props.appointments)
 const data = props.data
-const allAppointmentsRef = ref<HTMLElement | null>(props.allAppointmentsRef)
-const handleAllAppointments = props.handleAllAppointments
-const handleCreateAppointments = props.handleCreateAppointments
-const handleUpdateAppointment = props.handleUpdateAppointment
-// const updateAppointments = props.updateAppointments
 
-const { deleteAppointment } = useAppointments()
-
-const emit = defineEmits<{
-  (e: 'delete-appointment', appointmentId: string): void
-}>()
+const { dailyAppointments, deleteAppointment } = useAppointments()
 
 watch(
-  () => props.allAppointmentsRef,
+  () => allAppointmentsRef,
   (newVal) => {
     allAppointmentsRef.value = newVal || null
   },
@@ -53,17 +42,7 @@ const formattedWeekday = ref(data.weekday)
 const toast = useToast()
 
 const hideAppointments = () => {
-  if (!allAppointmentsRef.value) return
-  allAppointmentsRef.value.classList.add(
-    '!opacity-0',
-    'transform',
-    'translate-x-[100px]',
-    'transition-all',
-    'duration-200',
-  )
-  setTimeout(() => {
-    handleAllAppointments()
-  }, 200)
+  toggleAllAppointmentsView()
 }
 
 const callDeleteAppointment = async (appointmentId: string) => {
@@ -76,13 +55,12 @@ const callDeleteAppointment = async (appointmentId: string) => {
       life: 1500,
     })
     setTimeout(() => {
-      emit('delete-appointment', appointmentId)
+      dailyAppointments.value = dailyAppointments.value.filter(
+        (appt) => appt.appointmentId !== appointmentId,
+      )
+      toggleAllAppointmentsView()
     }, 1500)
   }
-}
-
-const updateAppointment = (appointment: Appointment) => {
-  handleUpdateAppointment(appointment)
 }
 </script>
 
@@ -98,9 +76,9 @@ const updateAppointment = (appointment: Appointment) => {
         <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
       </div>
       <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
-        <p class="text-[#484848] px-4">{{ appointments.length }} mušterija</p>
+        <p class="text-[#484848] px-4">{{ dailyAppointments.length }} mušterija</p>
         <ScrollableContainer class="flex-col gap-2 px-4 py-1 h-[450px] sm:max-h-[300px]">
-          <div v-for="appointment in appointments" :key="appointment.appointmentId">
+          <div v-for="appointment in dailyAppointments" :key="appointment.appointmentId">
             <div
               class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
             >
@@ -126,7 +104,9 @@ const updateAppointment = (appointment: Appointment) => {
                     class="cursor-pointer"
                     >Obriši</DropdownMenuItem
                   >
-                  <DropdownMenuItem @click="updateAppointment(appointment)" class="cursor-pointer"
+                  <DropdownMenuItem
+                    @click="handleUpdateAppointment(appointment)"
+                    class="cursor-pointer"
                     >Ažuriraj</DropdownMenuItem
                   >
                 </DropdownMenuContent>
@@ -139,7 +119,7 @@ const updateAppointment = (appointment: Appointment) => {
     <div class="flex items-end justify-center h-fit py-4">
       <button
         class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-        @click="handleCreateAppointments()"
+        @click="togleCreateAppointmentView()"
       >
         <span
           class="absolute top-0 sm:-top-[1px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"

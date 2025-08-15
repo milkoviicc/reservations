@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useAppointments } from '../composables/useAppointment'
+import { togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
 
 const { getWeeklyAppointments, weeklyAppointments } = useAppointments()
-
-const props = defineProps<{
-  handleCreateAppointments: () => void
-}>()
-
-const handleCreateAppointments = props.handleCreateAppointments
 
 const scrollContainer = ref<HTMLDivElement | null>(null)
 const isDragging = ref(false)
@@ -252,7 +247,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
     <div class="flex items-center justify-center h-full py-4">
       <button
         class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-        @click="handleCreateAppointments()"
+        @click="togleCreateAppointmentView()"
       >
         <span
           class="absolute top-0 sm:-top-[1px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"

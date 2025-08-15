@@ -1,54 +1,36 @@
 <script setup lang="ts">
-import { fetchDailyAppointments } from '@/api/appointments'
 import AllAppointments from '@/components/AllAppointments.vue'
 import CreateAppointment from '@/components/CreateAppointments.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateAppointments from '@/components/UpdateAppointments.vue'
 import WeeklyAppointments from '@/components/WeeklyAppointments.vue'
-import type { Appointment } from '@/lib/types'
+import { useAppointments } from '@/composables/useAppointment'
+import {
+  allAppointmentsRef,
+  createAppointmentRef,
+  updateAppointmentRef,
+  allAppointmentsOpened,
+  createAppointmentOpened,
+  toggleAllAppointmentsView,
+  togleCreateAppointmentView,
+  updateAppointmentOpened,
+} from '@/helpers/appointmentsRefHelper'
+import { getAppointment, getFormattedDateParts, hours } from '@/helpers/dataHelpers'
+import { getHourStyle } from '@/helpers/uiHelpers'
 import { computed, onMounted, ref } from 'vue'
 
+const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
 const date = ref(new Date())
 const selectedColor = ref('red')
 const formattedDay = ref<number>(0)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
 
-const allAppointmentsOpened = ref(false)
-const allAppointmentsRef = ref()
-const createAppointmentRef = ref<HTMLElement | null>(null)
-const createAppointmentsOpened = ref(false)
-const updateAppointmentRef = ref<HTMLElement | null>(null)
-const updateAppointmentOpened = ref(false)
-const updateAppointment = ref<Appointment | undefined>()
-
-const getFormattedDateParts = (date: Date) => {
-  const day = date.getDate() // e.g., 15
-
-  const month = date.toLocaleDateString('hr-HR', {
-    month: 'long',
-  })
-
-  const weekday = date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-  })
-
-  const uppercase = (str: string) => str.toUpperCase()
-
-  return {
-    day,
-    month: uppercase(month),
-    weekday: uppercase(weekday),
-  }
-}
-
 onMounted(() => {
   if (date.value) {
     handleDateChange(date.value)
   }
 })
-
-const brojMusterija = ref(0)
 
 const handleDateChange = async (newDate: Date) => {
   date.value = newDate
@@ -59,108 +41,14 @@ const handleDateChange = async (newDate: Date) => {
   formattedWeekday.value = weekday
 
   if (currentDisplay.value === 'dan') {
-    appointments.value = await fetchDailyAppointments(newDate)
-    brojMusterija.value = appointments.value.length
+    await getDailyAppointments(newDate)
     if (allAppointmentsOpened.value) {
       allAppointmentsOpened.value = !allAppointmentsOpened.value
     }
   }
 }
 
-const appointments = ref<Appointment[]>([])
-// Hours for the main timeline (like your code)
-const hours = Array.from({ length: 11 }, (_, i) => i + 9) // 9 → 19
-
-// Helper: decide the color of the hour based on 15-min precision
-function getHourStyle(hour: number): Record<string, string> {
-  let redStartPercent: number | null = null
-  let redEndPercent: number | null = null
-
-  const hourStartMin = hour * 60
-  const hourEndMin = hourStartMin + 60
-
-  let durationMinutes = 0
-
-  appointments.value.forEach((appt) => {
-    const [sh, sm] = appt.startTime.split(':').map(Number)
-    const [eh, em] = appt.endTime.split(':').map(Number)
-
-    const apptStart = sh * 60 + sm
-    const apptEnd = eh * 60 + em
-
-    const start = new Date(appt.startTime)
-    const end = new Date(appt.endTime)
-
-    durationMinutes = (end.getTime() - start.getTime()) / 60000
-
-    // Find overlap within the current hour
-    const overlapStart = Math.max(hourStartMin, apptStart)
-    const overlapEnd = Math.min(hourEndMin, apptEnd)
-
-    if (overlapEnd > overlapStart) {
-      const startPct = ((overlapStart - hourStartMin) / 60) * 100
-      const endPct = ((overlapEnd - hourStartMin) / 60) * 100
-
-      redStartPercent = redStartPercent === null ? startPct : Math.min(redStartPercent, startPct)
-
-      redEndPercent = redEndPercent === null ? endPct : Math.max(redEndPercent, endPct)
-    }
-  })
-
-  if (redStartPercent === null) {
-    // Fully free (green)
-    return { background: '#89EB7C' }
-  }
-
-  // Create gradient from green → red → green
-  return {
-    background: `linear-gradient(
-    to right,
-    #89EB7C 0%,
-    #89EB7C ${redStartPercent}%,
-    #F54242 ${redStartPercent}%,
-    #F54242 ${redEndPercent}%,
-    #89EB7C ${redEndPercent}%,
-    #89EB7C 100%
-  )`,
-    width: `${durationMinutes * pxPerMinute}px`,
-  }
-}
 const hoveredHour = ref<number | null>(null)
-// Get the first appointment in an hour (for tooltip)
-function getAppointment(hour: number) {
-  return appointments.value.find((app) => {
-    const [startH, startM] = app.startTime.split(':').map(Number)
-    const [endH, endM] = app.endTime.split(':').map(Number)
-
-    const slotStart = hour * 60 // slot start in minutes
-    const slotEnd = (hour + 1) * 60 // slot end in minutes
-
-    const appStart = startH * 60 + startM
-    const appEnd = endH * 60 + endM
-
-    // Match if appointment overlaps the slot
-    return appStart < slotEnd && appEnd > slotStart
-  })
-}
-
-const pxPerMinute = 1 // 1px per minute
-const handleAllAppointments = () => {
-  allAppointmentsOpened.value = !allAppointmentsOpened.value
-}
-
-const handleCreateAppointments = () => {
-  createAppointmentsOpened.value = !createAppointmentsOpened.value
-}
-
-const openUpdateAppointments = () => {
-  updateAppointmentOpened.value = !updateAppointmentOpened.value
-}
-
-const handleUpdateAppointment = (appointment: Appointment | undefined) => {
-  updateAppointment.value = appointment
-  openUpdateAppointments()
-}
 
 const allAppointmentsDateData = computed(() => ({
   date: date.value,
@@ -169,14 +57,7 @@ const allAppointmentsDateData = computed(() => ({
   weekday: formattedWeekday.value,
 }))
 
-const handleDeleteAppointment = (appointmentId: string) => {
-  appointments.value = appointments.value.filter((appt) => appt.appointmentId !== appointmentId)
-  allAppointmentsOpened.value = !allAppointmentsOpened.value
-  brojMusterija.value = brojMusterija.value - 1
-}
-
 const currentDisplay = ref('dan')
-
 const changeCalendarDisplay = (display: string) => {
   currentDisplay.value = display
 }
@@ -231,7 +112,7 @@ const changeCalendarDisplay = (display: string) => {
 
                 <div class="w-full flex justify-between pt-4 px-4 box-border">
                   <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
-                  <button class="underline cursor-pointer" @click="handleAllAppointments">
+                  <button class="underline cursor-pointer" @click="toggleAllAppointmentsView">
                     Svi termini
                   </button>
                 </div>
@@ -250,18 +131,18 @@ const changeCalendarDisplay = (display: string) => {
                       <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
                         <div
                           class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
-                          v-if="getAppointment(hour)?.startTime"
+                          v-if="getAppointment(dailyAppointments, hour)?.startTime"
                         >
                           <span
                             v-if="hoveredHour === hour"
                             class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                           >
                             <p class="text-black z-50 h-fit w-full">
-                              {{ getAppointment(hour)?.startTime }}
+                              {{ getAppointment(dailyAppointments, hour)?.startTime }}
                             </p>
                             <p class="text-black z-50 h-fit w-full">-</p>
                             <p class="text-black z-50 h-fit w-full">
-                              {{ getAppointment(hour)?.endTime }}
+                              {{ getAppointment(dailyAppointments, hour)?.endTime }}
                             </p>
                           </span>
                         </div>
@@ -274,7 +155,7 @@ const changeCalendarDisplay = (display: string) => {
               <div class="flex h-full justify-center items-center sm:p-4">
                 <button
                   class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-                  @click="handleCreateAppointments()"
+                  @click="togleCreateAppointmentView()"
                 >
                   <span
                     class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
@@ -290,7 +171,7 @@ const changeCalendarDisplay = (display: string) => {
           v-if="currentDisplay === 'tjedan'"
           class="w-full max-w-[550px] h-full sm:min-h-fit flex flex-col justify-between"
         >
-          <WeeklyAppointments :handleCreateAppointments="handleCreateAppointments" />
+          <WeeklyAppointments />
         </div>
       </div>
 
@@ -304,21 +185,12 @@ const changeCalendarDisplay = (display: string) => {
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <AllAppointments
-          :appointments="appointments"
-          :data="allAppointmentsDateData"
-          :allAppointmentsRef="allAppointmentsRef"
-          :handleAllAppointments="handleAllAppointments"
-          :handleCreateAppointments="handleCreateAppointments"
-          :handleUpdateAppointment="handleUpdateAppointment"
-          :updateAppointments="handleDateChange"
-          @delete-appointment="handleDeleteAppointment"
-        />
+        <AllAppointments :data="allAppointmentsDateData" />
       </div>
 
       <div
         ref="createAppointmentRef"
-        v-if="createAppointmentsOpened"
+        v-if="createAppointmentOpened"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 pt-2 rounded-md w-full sm:h-fit h-full"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
@@ -326,11 +198,7 @@ const changeCalendarDisplay = (display: string) => {
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <CreateAppointment
-          :createAppointmentRef="createAppointmentRef"
-          :handleCreateAppointments="handleCreateAppointments"
-          :updateAppointments="handleDateChange"
-        />
+        <CreateAppointment :updateAppointments="handleDateChange" />
       </div>
       <div
         ref="updateAppointmentRef"
@@ -342,12 +210,7 @@ const changeCalendarDisplay = (display: string) => {
         :leave="{ opacity: 0, translateX: 100 }"
         :duration="200"
       >
-        <UpdateAppointments
-          :appointment="updateAppointment"
-          :updateAppointmentRef="updateAppointmentRef"
-          :handleUpdateAppointment="handleUpdateAppointment"
-          :updateAppointments="handleDateChange"
-        />
+        <UpdateAppointments :updateAppointments="handleDateChange" />
       </div>
     </div>
   </main>
