@@ -2,6 +2,7 @@
 import { useAppointments } from '@/composables/useAppointment'
 import { createAppointmentRef, togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
 import { getDate, getFormattedDateParts } from '@/helpers/dataHelpers'
+import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref, watch } from 'vue'
 const date = ref(new Date())
@@ -63,25 +64,35 @@ const createNewAppointment = async (e: Event) => {
     cost: 50,
   }
   const res = await createAppointment(newAppointment)
-
-  if (res === 200) {
+  if (res.status === 200) {
     toast.add({
       severity: 'success',
       summary: 'Uspjeh!',
       detail: `Uspješno si kreirala novi termin.`,
       life: 1500,
     })
+
     setTimeout(() => {
       updateAppointments(date.value)
       togleCreateAppointmentView()
     }, 1500)
   } else {
-    toast.add({
-      severity: 'success',
-      summary: 'Greška!',
-      detail: `Došlo je do greške, molimo pokušajte ponovno.`,
-      life: 1500,
-    })
+    if (axios.isAxiosError(res)) {
+      const endTimeErr = res.response?.data?.errors?.EndTime
+      if (endTimeErr === 'End time must be later than start time.') {
+        toast.add({
+          severity: 'error',
+          summary: 'Greška!',
+          detail: `Vrijeme završetka termina mora biti nakon početka termina.`,
+        })
+      } else {
+        toast.add({
+          severity: 'error',
+          summary: 'Greška!',
+          detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+        })
+      }
+    }
   }
 }
 </script>
@@ -89,7 +100,11 @@ const createNewAppointment = async (e: Event) => {
 <template>
   <PrimeToast />
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
-    <div class="relative w-full h-full flex flex-col gap-4">
+    <form
+      class="relative w-full h-full flex flex-col gap-4"
+      method="POST"
+      @submit="createNewAppointment"
+    >
       <button class="px-4 py-2 cursor-pointer" @click="togleCreateAppointmentView()">
         <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
       </button>
@@ -138,10 +153,8 @@ const createNewAppointment = async (e: Event) => {
             class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full pt-4 sm:pt-0"
           >
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <form
+              <div
                 class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
-                method="POST"
-                @submit="createNewAppointment"
               >
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
@@ -204,12 +217,12 @@ const createNewAppointment = async (e: Event) => {
                   value="Dodaj termin"
                   class="w-fit bg-[#F54242] text-white px-8 py-1 sm:px-14 sm:py-2 rounded-md cursor-pointer"
                 />
-              </form>
+              </div>
             </div>
           </div>
         </template>
       </VDatePicker>
-    </div>
+    </form>
   </main>
 </template>
 
@@ -254,6 +267,10 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   appearance: textfield;
   -moz-appearance: textfield;
+}
+
+.vc-red {
+  --vc-accent-600: #f54242 !important;
 }
 
 @media screen and (max-width: 640px) {

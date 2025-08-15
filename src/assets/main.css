@@ -164,3 +164,11 @@ a,
     @apply bg-background text-foreground;
   }
 }
+
+.p-toast-message-error .p-toast-detail {
+  color: #ef4444 !important;
+}
+
+.p-toast-message-success .p-toast-detail {
+  color: #22c55e !important;
+}

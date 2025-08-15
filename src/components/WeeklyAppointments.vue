@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useAppointments } from '../composables/useAppointment'
 import { togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
+import { timeToMinutes } from '@/helpers/dataHelpers'
 
 const { getWeeklyAppointments, weeklyAppointments } = useAppointments()
 
@@ -70,12 +71,6 @@ function formatWeek(monday: Date): string {
   }
 }
 
-// === TIME HELPERS ===
-function timeToMinutes(time: string) {
-  const [h, m] = time.split(':').map(Number)
-  return h * 60 + m
-}
-
 // === STATE ===
 const weekRange = ref<string>('')
 const startDate = ref<Date>()
@@ -83,7 +78,6 @@ const endDate = ref<Date>()
 const currentMonday = ref<Date>(getMonday(new Date()))
 let timeout: ReturnType<typeof setTimeout> | null = null
 
-// === NAVIGATION ===
 function updateWeekString() {
   weekRange.value = formatWeek(currentMonday.value)
 }
@@ -102,7 +96,6 @@ function prevWeek() {
   timeout = setTimeout(() => getWeeklyAppointments(startDate.value!, endDate.value!), 300)
 }
 
-// === BLOCK BUILDER ===
 function buildBlocksForDay(day: string) {
   const dayIndex = days.indexOf(day) + 1 // Mon=1 ... Fri=5 in JS getDay()
   const dayAppointments = weeklyAppointments.value

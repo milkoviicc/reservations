@@ -224,6 +224,10 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
+.vc-red {
+  --vc-accent-600: #f54242 !important;
+}
+
 /* Firefox */
 input[type='number'] {
   -moz-appearance: textfield;

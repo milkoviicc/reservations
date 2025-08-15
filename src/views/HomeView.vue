@@ -15,8 +15,7 @@ import {
   togleCreateAppointmentView,
   updateAppointmentOpened,
 } from '@/helpers/appointmentsRefHelper'
-import { getAppointment, getFormattedDateParts, hours } from '@/helpers/dataHelpers'
-import { getHourStyle } from '@/helpers/uiHelpers'
+import { getFormattedDateParts, timeToMinutes } from '@/helpers/dataHelpers'
 import { computed, onMounted, ref } from 'vue'
 
 const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
@@ -48,8 +47,6 @@ const handleDateChange = async (newDate: Date) => {
   }
 }
 
-const hoveredHour = ref<number | null>(null)
-
 const allAppointmentsDateData = computed(() => ({
   date: date.value,
   day: formattedDay.value,
@@ -61,6 +58,77 @@ const currentDisplay = ref('dan')
 const changeCalendarDisplay = (display: string) => {
   currentDisplay.value = display
 }
+
+///////////
+
+const pxPerMinute = 1
+const workDayStart = '09:00'
+const workDayEnd = '19:00'
+
+// compute total width of the workday (in px)
+const workDayTotalWidthPx = computed(() => {
+  return (timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) * pxPerMinute
+})
+
+const hourTicks = computed(() => {
+  const startH = Number(workDayStart.split(':')[0])
+  const hoursCount = Math.floor((timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) / 60) + 1
+  return Array.from({ length: hoursCount }, (_, i) => startH + i)
+})
+
+function buildBlocksForAppointments(appointments: { startTime: string; endTime: string }[]) {
+  const sorted = (appointments || [])
+    .slice()
+    .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime))
+
+  const blocks: { startTime: string; endTime: string; color: string; width: number }[] = []
+  let currentTime = workDayStart
+
+  for (const app of sorted) {
+    const startMin = timeToMinutes(app.startTime)
+    const endMin = timeToMinutes(app.endTime)
+    const currentMin = timeToMinutes(currentTime)
+
+    if (startMin > currentMin) {
+      const dur = startMin - currentMin
+      blocks.push({
+        startTime: currentTime,
+        endTime: app.startTime,
+        color: '#89EB7C',
+        width: dur * pxPerMinute,
+      })
+    }
+
+    const durApp = Math.max(0, endMin - startMin)
+    if (durApp > 0) {
+      blocks.push({
+        startTime: app.startTime,
+        endTime: app.endTime,
+        color: '#F54242',
+        width: durApp * pxPerMinute,
+      })
+    }
+
+    currentTime = app.endTime
+  }
+
+  const currMin = timeToMinutes(currentTime)
+  const workEndMin = timeToMinutes(workDayEnd)
+  if (currMin < workEndMin) {
+    const dur = workEndMin - currMin
+    blocks.push({
+      startTime: currentTime,
+      endTime: workDayEnd,
+      color: '#89EB7C',
+      width: dur * pxPerMinute,
+    })
+  }
+
+  return blocks
+}
+
+// computed blocks for the selected day (expects dailyAppointments.value to already contain only that day's appts)
+const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.value || []))
 </script>
 
 <template>
@@ -116,35 +184,44 @@ const changeCalendarDisplay = (display: string) => {
                     Svi termini
                   </button>
                 </div>
-                <ScrollableContainer :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px]'">
-                  <div
-                    class="w-full px-[1px] py-1 text-center text-sm font-medium flex gap-[3px] items-center"
-                  >
+                <ScrollableContainer
+                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-fit w-full flex flex-col'"
+                >
+                  <div class="flex items-center">
                     <div
-                      v-for="hour in hours"
-                      :key="hour"
-                      class="w-full h-full rounded mt-2 relative group flex flex-col gap-[1px]"
-                      @mouseenter="hoveredHour = hour"
-                      @mouseleave="hoveredHour = null"
+                      :style="{ width: workDayTotalWidthPx + 'px' }"
+                      class="flex h-fit items-center"
                     >
-                      <p>{{ hour.toString().padStart(2, '0') }}:00</p>
-                      <div :style="getHourStyle(hour)" class="min-w-[50px] h-8 rounded-md">
+                      <div
+                        v-for="h in hourTicks"
+                        :key="h"
+                        class="min-w-[60px] text-center text-[#282828] font-medium"
+                      >
+                        {{ h.toString().padStart(2, '0') }}:00
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center h-14">
+                    <div
+                      :style="{ width: workDayTotalWidthPx + 'px' }"
+                      class="h-14 flex items-center py-1"
+                    >
+                      <div class="flex gap-1">
                         <div
-                          class="absolute left -1/2 -translate-x-1/2 top-0 h-fit w-fit z-20"
-                          v-if="getAppointment(dailyAppointments, hour)?.startTime"
+                          v-for="(block, idx) in dailyBlocks"
+                          :key="idx"
+                          :style="{ width: block.width + 'px', backgroundColor: block.color }"
+                          class="relative h-12 flex items-center justify-center rounded group"
                         >
-                          <span
-                            v-if="hoveredHour === hour"
-                            class="h-full w-fit z-20 flex flex-col items-center justify-center gap-[1px] bg-white text-gray-800 px-2 py-1 rounded shadow text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          <div
+                            v-if="block.color === '#F54242'"
+                            class="absolute -top-6 z-50 text-xs flex flex-col items-center justify-center bg-white text-gray-800 px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                           >
-                            <p class="text-black z-50 h-fit w-full">
-                              {{ getAppointment(dailyAppointments, hour)?.startTime }}
-                            </p>
-                            <p class="text-black z-50 h-fit w-full">-</p>
-                            <p class="text-black z-50 h-fit w-full">
-                              {{ getAppointment(dailyAppointments, hour)?.endTime }}
-                            </p>
-                          </span>
+                            <p>{{ block.startTime }}</p>
+                            <p>-</p>
+                            <p>{{ block.endTime }}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -249,6 +326,10 @@ const changeCalendarDisplay = (display: string) => {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+}
+
+.vc-red {
+  --vc-accent-600: #f54242 !important;
 }
 
 @media screen and (max-width: 640px) {

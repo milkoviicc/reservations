@@ -25,7 +25,7 @@ export const fetchDailyAppointments = async (date: Date) => {
       return res.data
     }
   } catch {
-    throw new Error('Failed to fetch appointments')
+    throw new Error('Failed to fetch dailly appointments')
   }
 }
 
@@ -40,20 +40,35 @@ export const createAppointmentApi = async (newAppointment: {
 }) => {
   try {
     const res = await axios.post('http://91.99.227.117/api/appointments', newAppointment)
-    return res.status
-  } catch {
-    throw new Error('Failed to create appointment')
+    return res
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error
+    }
+    throw new Error('Failed to fetch appointments')
   }
 }
 
 export const updateAppointmentApi = async (appointment: Appointment) => {
-  const res = await axios.put('http://91.99.227.117/api/appointments', appointment)
-
-  return res.status
+  try {
+    const res = await axios.put('http://91.99.227.117/api/appointments', appointment)
+    return res.status
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error
+    }
+    throw new Error('Failed to update appointment')
+  }
 }
 
 export const deleteAppointmentApi = async (appointmentId: string) => {
-  const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
-
-  return res.status
+  try {
+    const res = await axios.delete(`http://91.99.227.117/api/appointments/${appointmentId}`)
+    return res.status
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error
+    }
+    throw new Error('Failed to delete appointment')
+  }
 }
