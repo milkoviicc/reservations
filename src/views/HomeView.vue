@@ -177,7 +177,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           </template>
 
           <template #footer>
-            <div class="w-full h-full flex flex-col justify-between max-h-[500px]">
+            <div class="w-full h-full flex flex-col justify-between max-h-[350px]">
               <div class="w-full h-fit border-t flex flex-col border-[rgba(0,0,0,0.2)]">
                 <div class="w-full h-full flex flex-col justify-between">
                   <div class="w-full h-fit flex flex-col px-4 pt-4 box-border">
@@ -200,7 +200,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                 </div>
 
                 <ScrollableContainer
-                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-fit w-full flex flex-col !mt-1'"
+                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-full w-full flex flex-col !mt-1'"
                 >
                   <div class="flex items-center">
                     <div
