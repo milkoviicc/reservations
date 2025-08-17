@@ -283,7 +283,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       <div
         ref="createAppointmentRef"
         v-if="createAppointmentOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 pt-2 rounded-md w-full sm:h-fit h-full"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 pt-2 rounded-md w-full sm:w-[670px] sm:h-fit h-full"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -295,7 +295,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       <div
         ref="updateAppointmentRef"
         v-if="updateAppointmentOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 rounded-md pt-2 w-full h-full sm:h-fit"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 rounded-md pt-2 w-full sm:w-[670px] h-full sm:h-fit"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"

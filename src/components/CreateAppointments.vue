@@ -106,7 +106,7 @@ const createNewAppointment = async (e: Event) => {
       @submit="createNewAppointment"
     >
       <button class="px-4 py-2 cursor-pointer" @click="togleCreateAppointmentView()">
-        <img src="../assets/arrow-left.png" alt="Nazad" width="20" />
+        <img src="../assets/arrow-left.png" alt="Nazad" width="28" />
       </button>
 
       <div class="flex flex-col gap-1 !mt-4">
@@ -152,7 +152,7 @@ const createNewAppointment = async (e: Event) => {
           <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <div
-                class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
+                class="flex flex-col w-full h-full justify-between py-12 items-center sm:justify-between sm:py-0"
               >
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
@@ -167,11 +167,11 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="appearance-none w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
-                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
+                      <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
-                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">:</p>
+                    <p class="text-6xl h-16">:</p>
                     <div class="flex relative h-fit">
                       <input
                         type="number"
@@ -180,11 +180,11 @@ const createNewAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
-                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
+                      <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
-                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">-</p>
+                    <p class="text-6xl h-16">-</p>
                     <div class="flex relative h-fit">
                       <input
                         type="number"
@@ -193,11 +193,11 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
-                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
+                      <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
-                    <p class="text-5xl h-fit sm:text-6xl sm:h-16">:</p>
+                    <p class="text-6xl h-16">:</p>
                     <div class="flex relative h-fit">
                       <input
                         type="number"
@@ -206,16 +206,16 @@ const createNewAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
-                      <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
+                      <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
                   </div>
                 </div>
                 <input
                   type="submit"
                   value="Dodaj termin"
-                  class="w-fit bg-[#F54242] text-white px-8 py-1 sm:px-14 sm:py-2 rounded-md cursor-pointer"
+                  class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 cursor-pointer"
                 />
               </div>
             </div>
