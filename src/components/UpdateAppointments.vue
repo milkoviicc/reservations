@@ -125,7 +125,7 @@ const callUpdateAppointment = async (e: Event) => {
           <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
               <form
-                class="flex flex-col w-full h-full justify-evenly items-center sm:justify-between sm:pb-4"
+                class="flex flex-col w-full h-full justify-between pt-4 items-center sm:justify-between sm:pt-0"
                 method="PUT"
                 @submit="callUpdateAppointment"
               >
