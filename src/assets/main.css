@@ -179,3 +179,7 @@ a,
   padding: 7px 0 !important;
   height: max-content;
 }
+
+.is-not-in-month * {
+  opacity: 0.4 !important;
+}

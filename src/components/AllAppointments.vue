@@ -65,22 +65,24 @@ const callDeleteAppointment = async (appointmentId: string) => {
 </script>
 
 <template>
-  <div class="h-[100dvh] sm:h-fit sm:min-h-[550px] sm:max-h-[550px] overflow-hidden flex flex-col">
+  <div class="h-[100dvh] sm:h-fit sm:min-h-[650px] overflow-hidden flex flex-col justify-between">
     <PrimeToast />
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 h-full flex-1">
       <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
-        <img src="../assets/arrow-left.png" alt="" width="20" />
+        <img src="../assets/arrow-left.png" alt="" width="28" />
       </button>
-      <div class="w-full h-fit flex flex-col px-4 py-2">
-        <h3 class="text-[#484848] text-xl font-bold">{{ formattedDay }}. {{ formattedMonth }}</h3>
+      <div class="w-full h-fit flex flex-col px-4 pt-16 sm:pt-8">
+        <h3 class="text-[#484848] text-3xl font-bold leading-6">
+          {{ formattedDay }}. {{ formattedMonth }}
+        </h3>
         <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
       </div>
-      <div class="flex flex-col gap-2 pb-4 flex-1 overflow-auto">
+      <div class="h-full flex flex-col justify-center gap-2 pb-4 flex-1 overflow-hidden">
         <p class="text-[#484848] px-4">{{ dailyAppointments.length }} mušterija</p>
-        <ScrollableContainer class="flex-col gap-2 px-4 py-1 h-[450px] sm:max-h-[300px]">
+        <ScrollableContainer class="flex-1 flex-col max-h-[320px] gap-2 px-4 py-1x">
           <div v-for="appointment in dailyAppointments" :key="appointment.appointmentId">
             <div
-              class="shadow-[1px_2px_5px_1px_rgba(0,0,0,0.3)] flex justify-between py-2 px-4 rounded-lg"
+              class="shadow-[1px_1px_5px_0px_rgba(0,0,0,0.5)] flex justify-between py-2 px-4 rounded-lg"
             >
               <div class="flex flex-col gap-[2px]">
                 <h1 class="text-black font-medium text-[13px]">
@@ -118,11 +120,11 @@ const callDeleteAppointment = async (appointmentId: string) => {
     </div>
     <div class="flex items-end justify-center h-fit py-4">
       <button
-        class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
+        class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-[0_5px_5px_0_rgba(0,0,0,0.25)] relative cursor-pointer"
         @click="togleCreateAppointmentView()"
       >
         <span
-          class="absolute top-0 sm:-top-[1px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+          class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
         >
           +
         </span>

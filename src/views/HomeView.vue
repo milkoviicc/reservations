@@ -168,24 +168,39 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           disable-page-swipe
           v-if="currentDisplay === 'dan'"
         >
+          <template #header-prev-button>
+            <img src="../assets/left.png" alt="Previous month" />
+          </template>
+
+          <template #header-next-button>
+            <img src="../assets/right.png" alt="Next month" />
+          </template>
+
           <template #footer>
-            <div class="w-full h-full flex flex-col justify-between relative box-border">
-              <div class="w-full h-full border-t flex flex-col border-[rgba(0,0,0,0.2)] box-border">
-                <div class="w-full h-fit flex flex-col px-4 box-border">
-                  <h3 class="text-[#484848] text-xl font-bold">
-                    {{ formattedDay }}. {{ formattedMonth }}
-                  </h3>
-                  <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
+            <div class="w-full h-full flex flex-col justify-between max-h-[500px]">
+              <div class="w-full h-fit border-t flex flex-col border-[rgba(0,0,0,0.2)]">
+                <div class="w-full h-full flex flex-col justify-between">
+                  <div class="w-full h-fit flex flex-col px-4 pt-4 box-border">
+                    <h3 class="text-[#484848] text-3xl font-bold leading-6">
+                      {{ formattedDay }}. {{ formattedMonth }}
+                    </h3>
+                    <h4 class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</h4>
+                  </div>
+                  <div class="w-full flex justify-between pt-4 sm:pt-8 px-4 box-border">
+                    <p class="text-[16px] font-medium text-[#484848]">
+                      {{ brojMusterija }} mušterija
+                    </p>
+                    <button
+                      class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
+                      @click="toggleAllAppointmentsView"
+                    >
+                      Svi termini
+                    </button>
+                  </div>
                 </div>
 
-                <div class="w-full flex justify-between pt-4 px-4 box-border">
-                  <p class="text-[#484848]">{{ brojMusterija }} mušterija</p>
-                  <button class="underline cursor-pointer" @click="toggleAllAppointmentsView">
-                    Svi termini
-                  </button>
-                </div>
                 <ScrollableContainer
-                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-fit w-full flex flex-col'"
+                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-fit w-full flex flex-col !mt-1'"
                 >
                   <div class="flex items-center">
                     <div
@@ -229,13 +244,13 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                 </ScrollableContainer>
               </div>
 
-              <div class="flex h-full justify-center items-center sm:p-4">
+              <div class="flex h-fit justify-center sm:p-4">
                 <button
-                  class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
+                  class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
                   @click="togleCreateAppointmentView()"
                 >
                   <span
-                    class="absolute top-0 sm:-top-[5px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+                    class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
                   >
                     +
                   </span>
@@ -255,7 +270,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       <div
         ref="allAppointmentsRef"
         v-if="allAppointmentsOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 pt-2 rounded-md h-full sm:h-fit overflow-y-hidden"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 pt-2 rounded-md h-full sm:h-fit sm:min-h-[650px] overflow-y-hidden"
         v-motion="'transition'"
         :initial="{ opacity: 0, translateX: 100 }"
         :enter="{ opacity: 1, translateX: 0 }"
@@ -310,6 +325,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 .vc-arrow,
 .vc-title {
   background-color: transparent !important;
+  color: #4d4d4d !important;
 }
 
 .vc-bordered {

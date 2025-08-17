@@ -156,7 +156,9 @@ const createNewAppointment = async (e: Event) => {
               >
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
-                  <div class="flex gap-[3px] w-full h-fit justify-center px-2">
+                  <div
+                    class="flex gap-[3px] w-full h-fit justify-center px-2 font-['Istok web', 'sans-serif']"
+                  >
                     <div class="flex relative h-fit">
                       <input
                         type="number"
@@ -165,7 +167,7 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -178,7 +180,7 @@ const createNewAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
                     </div>
@@ -191,7 +193,7 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -204,7 +206,7 @@ const createNewAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
                     </div>

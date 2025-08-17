@@ -140,7 +140,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="appearance-none w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -153,12 +153,12 @@ const callUpdateAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
                     </div>
                     <p class="text-5xl h-fit sm:text-6xl sm:h-16">-</p>
-                    <div class="flex relative h-fit">
+                    <div class="flex relative h-fit font-['Istok web', 'sans-serif']">
                       <input
                         type="number"
                         v-model="endingHour"
@@ -166,7 +166,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -179,7 +179,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
                       />
                       <p class="absolute top-12 sm:top-16 left-0 text-xs">Minute</p>
                     </div>
