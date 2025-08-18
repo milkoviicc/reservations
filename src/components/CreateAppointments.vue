@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
 import { useScreen } from '@/composables/useScreen'
-import { createAppointmentRef, togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
+import { createAppointmentRef, toggleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
 import { getDate, getFormattedDateParts } from '@/helpers/dataHelpers'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
@@ -76,7 +76,7 @@ const createNewAppointment = async (e: Event) => {
 
     setTimeout(() => {
       updateAppointments(date.value)
-      togleCreateAppointmentView()
+      toggleCreateAppointmentView()
     }, 2500)
   } else {
     if (axios.isAxiosError(res)) {
@@ -119,7 +119,7 @@ const createNewAppointment = async (e: Event) => {
       method="POST"
       @submit="createNewAppointment"
     >
-      <button class="px-4 py-2 cursor-pointer" @click="togleCreateAppointmentView()">
+      <button class="px-4 py-2 cursor-pointer" @click="toggleCreateAppointmentView()">
         <img src="../assets/arrow-left.png" alt="Nazad" width="28" />
       </button>
 

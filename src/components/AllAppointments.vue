@@ -12,7 +12,7 @@ import {
   allAppointmentsRef,
   handleUpdateAppointment,
   toggleAllAppointmentsView,
-  togleCreateAppointmentView,
+  toggleCreateAppointmentView,
 } from '@/helpers/appointmentsRefHelper'
 import { useScreen } from '@/composables/useScreen'
 
@@ -121,10 +121,10 @@ const callDeleteAppointment = async (appointmentId: string) => {
         </ScrollableContainer>
       </div>
     </div>
-    <div class="flex items-end justify-center h-fit py-4">
+    <div class="flex items-end justify-center h-fit pb-4 sm:py-2">
       <button
         class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-[0_5px_5px_0_rgba(0,0,0,0.25)] relative cursor-pointer"
-        @click="togleCreateAppointmentView()"
+        @click="toggleCreateAppointmentView()"
       >
         <span
           class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"

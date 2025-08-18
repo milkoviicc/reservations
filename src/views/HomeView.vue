@@ -5,6 +5,7 @@ import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateAppointments from '@/components/UpdateAppointments.vue'
 import WeeklyAppointments from '@/components/WeeklyAppointments.vue'
 import { useAppointments } from '@/composables/useAppointment'
+import { useModal } from '@/composables/useModal'
 import {
   allAppointmentsRef,
   createAppointmentRef,
@@ -12,8 +13,8 @@ import {
   allAppointmentsOpened,
   createAppointmentOpened,
   toggleAllAppointmentsView,
-  togleCreateAppointmentView,
   updateAppointmentOpened,
+  toggleCreateAppointmentView,
 } from '@/helpers/appointmentsRefHelper'
 import { getFormattedDateParts, timeToMinutes } from '@/helpers/dataHelpers'
 import { computed, onMounted, ref } from 'vue'
@@ -129,6 +130,19 @@ function buildBlocksForAppointments(appointments: { startTime: string; endTime: 
 
 // computed blocks for the selected day (expects dailyAppointments.value to already contain only that day's appts)
 const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.value || []))
+
+const { modalStack } = useModal()
+
+window.addEventListener('popstate', () => {
+  const lastModal = modalStack.pop()
+
+  if (!lastModal) return // no modals, let browser handle back
+
+  // Close the last opened modal
+  if (lastModal === 'all') allAppointmentsOpened.value = false
+  if (lastModal === 'create') createAppointmentOpened.value = false
+  if (lastModal === 'update') updateAppointmentOpened.value = false
+})
 </script>
 
 <template>
@@ -194,7 +208,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
-                      @click="toggleAllAppointmentsView"
+                      @click="toggleAllAppointmentsView()"
                     >
                       Svi termini
                     </button>
@@ -259,7 +273,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       <div class="flex h-fit w-full justify-center pb-4 sm:py-2">
         <button
           class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
-          @click="togleCreateAppointmentView()"
+          @click="toggleCreateAppointmentView()"
         >
           <span
             class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
