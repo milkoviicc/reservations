@@ -5,7 +5,6 @@ import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import UpdateAppointments from '@/components/UpdateAppointments.vue'
 import WeeklyAppointments from '@/components/WeeklyAppointments.vue'
 import { useAppointments } from '@/composables/useAppointment'
-import { useModal } from '@/composables/useModal'
 import {
   allAppointmentsRef,
   createAppointmentRef,
@@ -130,19 +129,6 @@ function buildBlocksForAppointments(appointments: { startTime: string; endTime: 
 
 // computed blocks for the selected day (expects dailyAppointments.value to already contain only that day's appts)
 const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.value || []))
-
-const { modalStack } = useModal()
-
-window.addEventListener('popstate', () => {
-  const lastModal = modalStack.pop()
-
-  if (!lastModal) return // no modals, let browser handle back
-
-  // Close the last opened modal
-  if (lastModal === 'all') allAppointmentsOpened.value = false
-  if (lastModal === 'create') createAppointmentOpened.value = false
-  if (lastModal === 'update') updateAppointmentOpened.value = false
-})
 </script>
 
 <template>
