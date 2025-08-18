@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
+import { useScreen } from '@/composables/useScreen'
 import {
   appointmentToUpdate,
   handleUpdateAppointment,
@@ -28,6 +29,7 @@ watch(
   },
 )
 
+const { toastPosition } = useScreen()
 const selectedColor = ref('red')
 
 onMounted(() => {
@@ -68,8 +70,8 @@ const callUpdateAppointment = async (e: Event) => {
       clientLastName: clientName.value.split(' ')[1],
       appointmentType: appointmentType.value,
       date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
-      startTime: `${startingHour.value}:${startingMinutes.value}:00`,
-      endTime: `${endingHour.value}:${endingMinutes.value}:00`,
+      startTime: `${startingHour.value}:${startingMinutes.value || '00'}:00`,
+      endTime: `${endingHour.value}:${endingMinutes.value || '00'}:00`,
     }
     const res = await updateAppointment(updatedAppointment)
 
@@ -120,7 +122,7 @@ const callUpdateAppointment = async (e: Event) => {
 </script>
 
 <template>
-  <PrimeToast />
+  <PrimeToast :position="toastPosition" />
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <form
       class="relative w-full h-full flex flex-col gap-4"
@@ -141,7 +143,7 @@ const callUpdateAppointment = async (e: Event) => {
             type="text"
             placeholder="Naziv termina"
             required
-            class="bg-transparent text-black outline-none"
+            class="bg-transparent text-black outline-none w-full"
           />
         </div>
         <div
@@ -155,7 +157,7 @@ const callUpdateAppointment = async (e: Event) => {
             type="text"
             placeholder="Ime i prezime klijenta"
             required
-            class="flex-1 bg-transparent text-black outline-none"
+            class="flex-1 bg-transparent text-black outline-none w-full"
           />
         </div>
       </div>
@@ -201,7 +203,6 @@ const callUpdateAppointment = async (e: Event) => {
                         v-model="startingMinutes"
                         min="0"
                         max="59"
-                        required
                         class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
@@ -227,7 +228,6 @@ const callUpdateAppointment = async (e: Event) => {
                         placeholder="00"
                         min="0"
                         max="59"
-                        required
                         class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>

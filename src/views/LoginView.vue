@@ -4,12 +4,14 @@ import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import { useScreen } from '@/composables/useScreen'
 
 const username = ref('')
 const password = ref('')
 
 const authStore = useAuthStore()
 
+const { toastPosition } = useScreen()
 const toast = useToast()
 
 const handleLogin = async (e: Event) => {
@@ -31,12 +33,12 @@ const handleLogin = async (e: Event) => {
           severity: 'success',
           summary: 'Successful login',
           detail: `Bok ${user.firstName}, dobrodošla.`,
-          life: 3000,
+          life: 1500,
         })
 
         setTimeout(() => {
           window.location.href = '/'
-        }, 1000)
+        }, 1500)
       }
     } catch (error) {
       console.log(error)
@@ -77,5 +79,5 @@ const handleLogin = async (e: Event) => {
       class="w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
     />
   </form>
-  <PrimeToast />
+  <PrimeToast :position="toastPosition" />
 </template>

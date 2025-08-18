@@ -137,7 +137,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       class="h-[100dvh] w-full sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
     >
       <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
-        <div class="flex gap-2 pt-8 pb-4 sm:py-4 text-black justify-center">
+        <div class="flex gap-2 py-4 text-black justify-center">
           <button
             @click="changeCalendarDisplay('dan')"
             class="cursor-pointer text-lg text-[#7F7F7F]"
@@ -251,7 +251,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 
         <div
           v-if="currentDisplay === 'tjedan'"
-          class="w-full max-w-[550px] h-full sm:min-h-fit flex flex-col justify-between"
+          class="w-full max-w-[640px] h-full sm:min-h-fit flex flex-col justify-between"
         >
           <WeeklyAppointments />
         </div>

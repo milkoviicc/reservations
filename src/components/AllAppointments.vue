@@ -14,6 +14,7 @@ import {
   toggleAllAppointmentsView,
   togleCreateAppointmentView,
 } from '@/helpers/appointmentsRefHelper'
+import { useScreen } from '@/composables/useScreen'
 
 const props = defineProps<{
   data: {
@@ -35,6 +36,8 @@ watch(
   },
 )
 
+const { toastPosition } = useScreen()
+
 const formattedDay = ref(data.day)
 const formattedMonth = ref(data.month)
 const formattedWeekday = ref(data.weekday)
@@ -52,21 +55,21 @@ const callDeleteAppointment = async (appointmentId: string) => {
       severity: 'success',
       summary: 'Uspjeh!',
       detail: `Uspješno si obrisala postojeći termin.`,
-      life: 1500,
+      life: 2500,
     })
     setTimeout(() => {
       dailyAppointments.value = dailyAppointments.value.filter(
         (appt) => appt.appointmentId !== appointmentId,
       )
       toggleAllAppointmentsView()
-    }, 1500)
+    }, 2500)
   }
 }
 </script>
 
 <template>
   <div class="h-[100dvh] sm:h-fit sm:min-h-[650px] overflow-hidden flex flex-col justify-between">
-    <PrimeToast />
+    <PrimeToast :position="toastPosition" />
     <div class="flex flex-col gap-2 h-full flex-1">
       <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
         <img src="../assets/arrow-left.png" alt="" width="28" />
@@ -87,7 +90,6 @@ const callDeleteAppointment = async (appointmentId: string) => {
               <div class="flex flex-col gap-[2px]">
                 <h1 class="text-black font-medium text-[13px]">
                   {{ appointment.appointmentType }} {{ appointment.clientFirstName }} (
-                  {{ appointment.cost }} eura)
                 </h1>
                 <div class="flex gap-2 items-center">
                   <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>

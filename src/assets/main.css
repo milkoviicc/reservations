@@ -183,3 +183,9 @@ a,
 .is-not-in-month * {
   opacity: 0.4 !important;
 }
+
+@media screen and (max-width: 640px) {
+  .p-toast-top-center {
+    padding: 0 10px;
+  }
+}

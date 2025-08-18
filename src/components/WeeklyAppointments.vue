@@ -151,7 +151,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 pt-4 sm:pt-2">
     <div class="border-t-[1px] border-b-[1px] p-2 border-[#C7C7C7] flex justify-between">
       <button @click="prevWeek()" class="cursor-pointer">
         <img src="../assets/left.png" alt="Previous week button" />
@@ -164,13 +164,13 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
       </button>
     </div>
 
-    <div class="flex">
-      <div class="flex flex-col w-16 border-b border-[#B0B0B0]">
+    <div class="flex py-4 sm:py-2">
+      <div class="flex flex-col w-16 gap-2 border-b border-[#B0B0B0]">
         <div class="h-[24px]"></div>
         <div
           v-for="day in days"
           :key="day"
-          class="flex items-center justify-center h-14 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
+          class="flex items-center justify-center h-20 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
         >
           {{ day }}
         </div>
@@ -184,7 +184,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         @mouseleave="stopDrag"
         @mousemove="onDrag"
       >
-        <div class="flex flex-col border-b border-[#B0B0B0] min-w-max">
+        <div class="flex flex-col border-b border-[#B0B0B0] min-w-max gap-2">
           <div class="flex h-full w-fit max-w-[660px]">
             <div class="flex">
               <div
@@ -200,14 +200,14 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div
             v-for="day in days"
             :key="day"
-            class="flex h-14 border-t border-[#B0B0B0] py-1 px-2 w-full"
+            class="flex h-20 border-t border-[#B0B0B0] py-1 px-2 w-full"
           >
             <div class="flex gap-[1px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
                 :style="{ width: block.width + 'px', backgroundColor: block.color }"
-                class="relative h-12 flex items-center justify-center rounded group"
+                class="relative h-20 flex items-center justify-center rounded group"
               >
                 <div
                   v-if="block.color === '#F54242'"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
+import { useScreen } from '@/composables/useScreen'
 import { createAppointmentRef, togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
 import { getDate, getFormattedDateParts } from '@/helpers/dataHelpers'
 import axios from 'axios'
@@ -22,6 +23,8 @@ watch(
   },
 )
 
+const { toastPosition } = useScreen()
+
 const selectedColor = ref('red')
 const formattedDay = ref<number | null>(null)
 const formattedMonth = ref('')
@@ -43,10 +46,10 @@ const handleDateChange = (newDate: Date) => {
 
 const appointmentType = ref('')
 const clientName = ref('')
-const appointmentStartingHours = ref('')
-const appointmentStartingMinutes = ref('')
-const appointmentEndingHours = ref('')
-const appointmentEndingMinutes = ref('')
+const appointmentStartingHours = ref<number>()
+const appointmentStartingMinutes = ref<number>()
+const appointmentEndingHours = ref<number>()
+const appointmentEndingMinutes = ref<number>()
 
 const toast = useToast()
 
@@ -59,8 +62,8 @@ const createNewAppointment = async (e: Event) => {
     clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
     appointmentType: appointmentType.value,
     date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
-    startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
-    endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value}`,
+    startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value || '00'}`,
+    endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value || '00'}`,
   }
   const res = await createAppointment(newAppointment)
   if (res.status === 200) {
@@ -109,7 +112,7 @@ const createNewAppointment = async (e: Event) => {
 </script>
 
 <template>
-  <PrimeToast />
+  <PrimeToast :position="toastPosition" />
   <main class="h-[100dvh] sm:h-fit !overflow-visible">
     <form
       class="relative w-full h-full flex flex-col gap-4"
@@ -130,7 +133,7 @@ const createNewAppointment = async (e: Event) => {
             type="text"
             placeholder="Naziv termina"
             required
-            class="bg-transparent text-black outline-none"
+            class="bg-transparent text-black outline-none w-full"
           />
         </div>
         <div
@@ -144,7 +147,7 @@ const createNewAppointment = async (e: Event) => {
             type="text"
             placeholder="Ime i prezime klijenta"
             required
-            class="flex-1 bg-transparent text-black outline-none"
+            class="flex-1 bg-transparent text-black outline-none w-full"
           />
         </div>
       </div>
@@ -190,7 +193,6 @@ const createNewAppointment = async (e: Event) => {
                         v-model="appointmentStartingMinutes"
                         min="0"
                         max="59"
-                        required
                         class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
@@ -216,7 +218,6 @@ const createNewAppointment = async (e: Event) => {
                         placeholder="00"
                         min="0"
                         max="59"
-                        required
                         class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
