@@ -31,7 +31,6 @@ export function useAppointments() {
     date: string
     startTime: string
     endTime: string
-    cost: number
   }) => {
     const res = await createAppointmentApi(newAppointment)
     return res

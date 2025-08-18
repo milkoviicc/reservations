@@ -15,5 +15,4 @@ export interface Appointment {
   date: string
   startTime: string
   endTime: string
-  cost: number
 }

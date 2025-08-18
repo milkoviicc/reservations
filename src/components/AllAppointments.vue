@@ -79,7 +79,7 @@ const callDeleteAppointment = async (appointmentId: string) => {
       </div>
       <div class="h-full flex flex-col justify-center gap-2 pb-4 flex-1 overflow-hidden">
         <p class="text-[#484848] px-4">{{ dailyAppointments.length }} mušterija</p>
-        <ScrollableContainer class="flex-1 flex-col max-h-[320px] gap-2 px-4 py-1x">
+        <ScrollableContainer class="flex-1 flex-col max-h-[320px] gap-2 px-4 py-1">
           <div v-for="appointment in dailyAppointments" :key="appointment.appointmentId">
             <div
               class="shadow-[1px_1px_5px_0px_rgba(0,0,0,0.5)] flex justify-between py-2 px-4 rounded-lg"

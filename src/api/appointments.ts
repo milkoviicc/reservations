@@ -36,7 +36,6 @@ export const createAppointmentApi = async (newAppointment: {
   date: string
   startTime: string
   endTime: string
-  cost: number
 }) => {
   try {
     const res = await axios.post('http://91.99.227.117/api/appointments', newAppointment)

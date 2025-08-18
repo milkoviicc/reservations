@@ -132,9 +132,11 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 </script>
 
 <template>
-  <main class="h-[100dvh] overflow-hidden">
-    <div class="h-full max-w-[640px] sm:w-fit sm:max-w-full flex items-center">
-      <div class="bg-white rounded-md w-full h-full sm:h-fit max-w-[640px] sm:w-fit sm:max-w-full">
+  <main class="h-[100dvh] overflow-hidden flex items-center">
+    <div
+      class="h-[100dvh] w-full sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
+    >
+      <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
         <div class="flex gap-2 pt-8 pb-4 sm:py-4 text-black justify-center">
           <button
             @click="changeCalendarDisplay('dan')"
@@ -163,7 +165,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           locale="hr"
           :masks="{ weekdays: 'WWW', title: 'MMMM' }"
           :color="selectedColor"
-          class="flex flex-col h-full min-h-full sm:min-h-fit pt-3 min-w-full max-w-[640px] sm:w-auto homeViewCalendar"
+          class="flex flex-col h-fit pt-3 min-w-full max-w-[640px] sm:w-auto homeViewCalendar"
           @update:model-value="handleDateChange"
           disable-page-swipe
           v-if="currentDisplay === 'dan'"
@@ -186,7 +188,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </h3>
                     <h4 class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</h4>
                   </div>
-                  <div class="w-full flex justify-between pt-4 sm:pt-8 px-4 box-border">
+                  <div class="w-full flex justify-between pt-12 px-4 box-border">
                     <p class="text-[16px] font-medium text-[#484848]">
                       {{ brojMusterija }} mušterija
                     </p>
@@ -243,28 +245,28 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                   </div>
                 </ScrollableContainer>
               </div>
-
-              <div class="flex h-fit justify-center sm:p-4">
-                <button
-                  class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
-                  @click="togleCreateAppointmentView()"
-                >
-                  <span
-                    class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
-                  >
-                    +
-                  </span>
-                </button>
-              </div>
             </div>
           </template>
         </VDatePicker>
+
         <div
           v-if="currentDisplay === 'tjedan'"
           class="w-full max-w-[550px] h-full sm:min-h-fit flex flex-col justify-between"
         >
           <WeeklyAppointments />
         </div>
+      </div>
+      <div class="flex h-fit w-full justify-center pb-4 sm:py-2">
+        <button
+          class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
+          @click="togleCreateAppointmentView()"
+        >
+          <span
+            class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
+          >
+            +
+          </span>
+        </button>
       </div>
 
       <div
@@ -347,11 +349,5 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 
 .vc-red {
   --vc-accent-600: #f54242 !important;
-}
-
-@media screen and (max-width: 640px) {
-  .homeViewCalendar .vc-pane-container {
-    height: 100dvh !important;
-  }
 }
 </style>

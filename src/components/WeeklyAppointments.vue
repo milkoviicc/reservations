@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useAppointments } from '../composables/useAppointment'
-import { togleCreateAppointmentView } from '@/helpers/appointmentsRefHelper'
 import { timeToMinutes } from '@/helpers/dataHelpers'
 
 const { getWeeklyAppointments, weeklyAppointments } = useAppointments()
@@ -30,13 +29,11 @@ function onDrag(e: MouseEvent) {
   scrollContainer.value.scrollLeft = scrollLeft.value - walk
 }
 
-// === CONFIG ===
 const days: string[] = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet']
 const workDayStart = '09:00'
-const workDayEnd = '19:00'
-const pxPerMinute = 1 // 1 minute = 1px
+const workDayEnd = '20:00'
+const pxPerMinute = 1
 
-// === WEEK & DATE HELPERS ===
 const monthsHr = [
   'siječnja',
   'veljače',
@@ -155,7 +152,6 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
 
 <template>
   <div class="flex flex-col gap-2">
-    <!-- Week Navigation -->
     <div class="border-t-[1px] border-b-[1px] p-2 border-[#C7C7C7] flex justify-between">
       <button @click="prevWeek()" class="cursor-pointer">
         <img src="../assets/left.png" alt="Previous week button" />
@@ -168,12 +164,9 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
       </button>
     </div>
 
-    <!-- Weekly Schedule -->
     <div class="flex">
-      <!-- Static Day Labels -->
       <div class="flex flex-col w-16 border-b border-[#B0B0B0]">
         <div class="h-[24px]"></div>
-        <!-- Empty space for hour row -->
         <div
           v-for="day in days"
           :key="day"
@@ -183,7 +176,6 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         </div>
       </div>
 
-      <!-- Scrollable Appointments -->
       <div
         ref="scrollContainer"
         class="overflow-x-scroll scrollbar-hide cursor-grab active:cursor-grabbing select-none flex-1"
@@ -193,9 +185,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         @mousemove="onDrag"
       >
         <div class="flex flex-col border-b border-[#B0B0B0] min-w-max">
-          <!-- Hour Row -->
-          <div class="flex h-full w-full">
-            <!-- Empty space for static labels -->
+          <div class="flex h-full w-fit max-w-[660px]">
             <div class="flex">
               <div
                 v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
@@ -207,14 +197,12 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
             </div>
           </div>
 
-          <!-- Days Blocks -->
           <div
             v-for="day in days"
             :key="day"
             class="flex h-14 border-t border-[#B0B0B0] py-1 px-2 w-full"
           >
-            <!-- Space for static labels -->
-            <div class="flex gap-1">
+            <div class="flex gap-[1px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
@@ -235,29 +223,14 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         </div>
       </div>
     </div>
-
-    <!-- Create Appointment Button -->
-    <div class="flex items-center justify-center h-full py-4">
-      <button
-        class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-lg relative cursor-pointer"
-        @click="togleCreateAppointmentView()"
-      >
-        <span
-          class="absolute top-0 sm:-top-[1px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
-        >
-          +
-        </span>
-      </button>
-    </div>
   </div>
 </template>
 <style>
-/* Hide scrollbar */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 </style>

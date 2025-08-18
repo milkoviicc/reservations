@@ -61,7 +61,6 @@ const createNewAppointment = async (e: Event) => {
     date: `${appointmentDate.year}-${appointmentDate.month}-${appointmentDate.day}`,
     startTime: `${appointmentStartingHours.value}:${appointmentStartingMinutes.value}`,
     endTime: `${appointmentEndingHours.value}:${appointmentEndingMinutes.value}`,
-    cost: 50,
   }
   const res = await createAppointment(newAppointment)
   if (res.status === 200) {
@@ -69,27 +68,39 @@ const createNewAppointment = async (e: Event) => {
       severity: 'success',
       summary: 'Uspjeh!',
       detail: `Uspješno si kreirala novi termin.`,
-      life: 1500,
+      life: 2500,
     })
 
     setTimeout(() => {
       updateAppointments(date.value)
       togleCreateAppointmentView()
-    }, 1500)
+    }, 2500)
   } else {
     if (axios.isAxiosError(res)) {
-      const endTimeErr = res.response?.data?.errors?.EndTime
+      const endTimeErr = res.response?.data?.errors?.EndTime[0]
+      const appointmentOverlaping = res.response?.data?.detail
       if (endTimeErr === 'End time must be later than start time.') {
         toast.add({
           severity: 'error',
           summary: 'Greška!',
           detail: `Vrijeme završetka termina mora biti nakon početka termina.`,
+          life: 2500,
+        })
+      } else if (
+        appointmentOverlaping === 'Appointment time overlaps with an existing appointment.'
+      ) {
+        toast.add({
+          severity: 'error',
+          summary: 'Greška!',
+          detail: `Vrijeme termina preklapa se s postojećim terminom.`,
+          life: 2500,
         })
       } else {
         toast.add({
           severity: 'error',
           summary: 'Greška!',
           detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+          life: 2500,
         })
       }
     }

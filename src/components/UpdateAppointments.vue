@@ -52,21 +52,24 @@ const startingHour = ref()
 const startingMinutes = ref()
 const endingHour = ref()
 const endingMinutes = ref()
+const appointmentType = ref(appointmentToUpdate.value?.appointmentType)
+const clientName = ref(
+  `${appointmentToUpdate.value?.clientFirstName} ${appointmentToUpdate.value?.clientLastName}`,
+)
 
 const toast = useToast()
 
 const callUpdateAppointment = async (e: Event) => {
   e.preventDefault()
-  if (appointmentToUpdate.value) {
+  if (appointmentToUpdate.value && appointmentType.value) {
     const updatedAppointment: Appointment = {
       appointmentId: appointmentToUpdate.value.appointmentId,
-      clientFirstName: appointmentToUpdate.value.clientFirstName,
-      clientLastName: appointmentToUpdate.value.clientLastName,
-      appointmentType: appointmentToUpdate.value.appointmentType,
+      clientFirstName: clientName.value.split(' ')[0],
+      clientLastName: clientName.value.split(' ')[1],
+      appointmentType: appointmentType.value,
       date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
       startTime: `${startingHour.value}:${startingMinutes.value}:00`,
       endTime: `${endingHour.value}:${endingMinutes.value}:00`,
-      cost: appointmentToUpdate.value.cost,
     }
     const res = await updateAppointment(updatedAppointment)
 
@@ -74,28 +77,40 @@ const callUpdateAppointment = async (e: Event) => {
       toast.add({
         severity: 'success',
         summary: 'Uspjeh!',
-        detail: `Uspješno si kreirala novi termin.`,
-        life: 1500,
+        detail: `Uspješno si ažurirala postojeći termin.`,
+        life: 2500,
       })
 
       setTimeout(() => {
         updateAppointments(date.value)
         toggleUpdateAppointmentView()
-      }, 1500)
+      }, 2500)
     } else {
       if (axios.isAxiosError(res)) {
-        const endTimeErr = res.response?.data?.errors?.EndTime
+        const endTimeErr = res.response?.data?.errors?.EndTime[0]
+        const appointmentOverlaping = res.response?.data?.detail
         if (endTimeErr === 'End time must be later than start time.') {
           toast.add({
             severity: 'error',
             summary: 'Greška!',
             detail: `Vrijeme završetka termina mora biti nakon početka termina.`,
+            life: 2500,
+          })
+        } else if (
+          appointmentOverlaping === 'Appointment time overlaps with an existing appointment.'
+        ) {
+          toast.add({
+            severity: 'error',
+            summary: 'Greška!',
+            detail: `Vrijeme termina preklapa se s postojećim terminom.`,
+            life: 2500,
           })
         } else {
           toast.add({
             severity: 'error',
             summary: 'Greška!',
             detail: `Došlo je do greške, molimo pokušajte ponovno.`,
+            life: 2500,
           })
         }
       }
@@ -105,11 +120,45 @@ const callUpdateAppointment = async (e: Event) => {
 </script>
 
 <template>
-  <main class="min-h-full h-full w-full sm:max-w-full sm:w-full sm:min-h-[600px]">
-    <div class="relative w-full h-full min-h-[600px] flex flex-col gap-4">
-      <button class="px-4 py-2 cursor-pointer" @click="hideUpdateAppointments">
+  <PrimeToast />
+  <main class="h-[100dvh] sm:h-fit !overflow-visible">
+    <form
+      class="relative w-full h-full flex flex-col gap-4"
+      method="POST"
+      @submit="callUpdateAppointment"
+    >
+      <button class="px-4 py-2 cursor-pointer" @click="hideUpdateAppointments()">
         <img src="../assets/arrow-left.png" alt="Nazad" width="28" />
       </button>
+
+      <div class="flex flex-col gap-1 !mt-4">
+        <div
+          class="flex flex-1 gap-4 px-3 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
+        >
+          <div class="bg-[#F54242] w-[22px] h-[22px] rounded-full"></div>
+          <input
+            v-model="appointmentType"
+            type="text"
+            placeholder="Naziv termina"
+            required
+            class="bg-transparent text-black outline-none"
+          />
+        </div>
+        <div
+          class="flex flex-1 gap-2 px-2 shadow-[1px_2px_4px_1px_rgba(0,0,0,0.20)] py-2 mt-8 max-h-fit"
+        >
+          <div class="w-[34px] h-[34px] rounded-full">
+            <img src="../assets/frame.png" alt="User frame" class="w-full h-full" />
+          </div>
+          <input
+            v-model="clientName"
+            type="text"
+            placeholder="Ime i prezime klijenta"
+            required
+            class="flex-1 bg-transparent text-black outline-none"
+          />
+        </div>
+      </div>
 
       <VDatePicker
         v-model="date"
@@ -117,21 +166,21 @@ const callUpdateAppointment = async (e: Event) => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex-1 w-full !mt-16 sm:mt-10! max-w-[301.6px] min-w-[301.6px] h-[400px] !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
+        class="flex-1 w-full !mt-4 max-w-[301.6px] min-w-[301.6px] h-full !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
           <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <form
+              <div
                 class="flex flex-col w-full h-full justify-between pt-4 items-center sm:justify-between sm:pt-0"
-                method="PUT"
-                @submit="callUpdateAppointment"
               >
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
-                  <div class="flex gap-[3px] w-full h-fit justify-center px-2">
+                  <div
+                    class="flex gap-[3px] w-full h-fit justify-center px-2 font-['Istok web', 'sans-serif']"
+                  >
                     <div class="flex relative h-fit">
                       <input
                         type="number"
@@ -140,7 +189,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="appearance-none w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -153,12 +202,12 @@ const callUpdateAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
                     <p class="text-6xl h-16">-</p>
-                    <div class="flex relative h-fit font-['Istok web', 'sans-serif']">
+                    <div class="flex relative h-fit">
                       <input
                         type="number"
                         v-model="endingHour"
@@ -166,7 +215,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -179,7 +228,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="0"
                         max="59"
                         required
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-2xl sm:text-3xl text-center"
+                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
@@ -190,12 +239,12 @@ const callUpdateAppointment = async (e: Event) => {
                   value="Ažuriraj termin"
                   class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 cursor-pointer"
                 />
-              </form>
+              </div>
             </div>
           </div>
         </template>
       </VDatePicker>
-    </div>
+    </form>
   </main>
 </template>
 
