@@ -89,7 +89,8 @@ const callDeleteAppointment = async (appointmentId: string) => {
             >
               <div class="flex flex-col gap-[2px]">
                 <h1 class="text-black font-medium text-[13px]">
-                  {{ appointment.appointmentType }} {{ appointment.clientFirstName }} (
+                  {{ appointment.appointmentType }} {{ appointment.clientFirstName }}
+                  {{ appointment.clientLastName }}
                 </h1>
                 <div class="flex gap-2 items-center">
                   <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>
