@@ -61,3 +61,13 @@ export function timeToMinutes(time: string) {
   const [h, m] = time.split(':').map(Number)
   return h * 60 + m
 }
+
+export function getAppointmentText(brojTermina: number): string {
+  const lastDigit = brojTermina % 10
+  const lastTwoDigits = brojTermina % 100
+
+  if (lastDigit === 1 && lastTwoDigits !== 11) {
+    return 'termin'
+  }
+  return 'termina'
+}

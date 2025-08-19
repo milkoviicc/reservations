@@ -15,7 +15,7 @@ import {
   updateAppointmentOpened,
   toggleCreateAppointmentView,
 } from '@/helpers/appointmentsRefHelper'
-import { getFormattedDateParts, timeToMinutes } from '@/helpers/dataHelpers'
+import { getAppointmentText, getFormattedDateParts, timeToMinutes } from '@/helpers/dataHelpers'
 import { computed, onMounted, ref } from 'vue'
 
 const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
@@ -190,7 +190,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                   </div>
                   <div class="w-full flex justify-between pt-12 px-4 box-border">
                     <p class="text-[16px] font-medium text-[#484848]">
-                      {{ brojMusterija }} mušterija
+                      {{ brojMusterija }} {{ getAppointmentText(brojMusterija) }}
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
@@ -207,7 +207,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                   <div class="flex items-center">
                     <div
                       :style="{ width: workDayTotalWidthPx + 'px' }"
-                      class="flex h-fit items-center"
+                      class="flex h-fit items-center pb-4 pt-2"
                     >
                       <div
                         v-for="h in hourTicks"
@@ -219,17 +219,17 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </div>
                   </div>
 
-                  <div class="flex items-center h-14">
+                  <div class="flex items-center h-14 pb-2">
                     <div
                       :style="{ width: workDayTotalWidthPx + 'px' }"
-                      class="h-14 flex items-center py-1"
+                      class="h-14 flex items-center"
                     >
-                      <div class="flex gap-1 w-full px-2">
+                      <div class="flex gap-1 w-full h-max px-2 pb-2">
                         <div
                           v-for="(block, idx) in dailyBlocks"
                           :key="idx"
                           :style="{ width: block.width + 'px', backgroundColor: block.color }"
-                          class="relative h-12 flex items-center justify-center rounded group"
+                          class="relative h-14 flex items-center justify-center rounded group"
                         >
                           <div
                             v-if="block.color === '#F54242'"
@@ -258,12 +258,10 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       </div>
       <div class="flex h-fit w-full justify-center pb-4 sm:py-2">
         <button
-          class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
+          class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
           @click="toggleCreateAppointmentView()"
         >
-          <span
-            class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
-          >
+          <span class="absolute top-0 left-1/2 transform -translate-x-1/2 text-4xl font-normal">
             +
           </span>
         </button>

@@ -15,6 +15,7 @@ import {
   toggleCreateAppointmentView,
 } from '@/helpers/appointmentsRefHelper'
 import { useScreen } from '@/composables/useScreen'
+import { getAppointmentText } from '@/helpers/dataHelpers'
 
 const props = defineProps<{
   data: {
@@ -81,11 +82,13 @@ const callDeleteAppointment = async (appointmentId: string) => {
         <p class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</p>
       </div>
       <div class="h-full flex flex-col justify-center gap-2 pb-4 flex-1 overflow-hidden">
-        <p class="text-[#484848] px-4">{{ dailyAppointments.length }} mušterija</p>
+        <p class="text-[#484848] px-4">
+          {{ dailyAppointments.length }} {{ getAppointmentText(dailyAppointments.length) }}
+        </p>
         <ScrollableContainer class="flex-1 flex-col max-h-[320px] gap-2 px-4 py-1">
           <div v-for="appointment in dailyAppointments" :key="appointment.appointmentId">
             <div
-              class="shadow-[1px_1px_5px_0px_rgba(0,0,0,0.5)] flex justify-between py-2 px-4 rounded-lg"
+              class="shadow-[1px_3px_4px_1px_rgba(0,0,0,0.25)] flex justify-between py-2 px-4 rounded-lg"
             >
               <div class="flex flex-col gap-[2px]">
                 <h1 class="text-black font-medium text-[13px]">
@@ -123,12 +126,10 @@ const callDeleteAppointment = async (appointmentId: string) => {
     </div>
     <div class="flex justify-center h-fit pb-5 sm:py-2">
       <button
-        class="bg-[#F54242] text-white w-[40px] h-[40px] rounded-[17px] shadow-[0_5px_5px_0_rgba(0,0,0,0.25)] relative cursor-pointer"
+        class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] shadow-[0_5px_5px_0_rgba(0,0,0,0.25)] relative cursor-pointer"
         @click="toggleCreateAppointmentView()"
       >
-        <span
-          class="absolute top-0 sm:-top-[3px] left-1/2 transform -translate-x-1/2 text-4xl font-normal"
-        >
+        <span class="absolute top-0 left-1/2 transform -translate-x-1/2 text-4xl font-normal">
           +
         </span>
       </button>

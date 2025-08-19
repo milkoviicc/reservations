@@ -48,7 +48,7 @@ export const toggleCreateAppointmentView = () => {
 
 export const toggleUpdateAppointmentView = () => {
   if (!updateAppointmentRef.value) {
-    updateAppointmentOpened.value = !allAppointmentsOpened.value
+    updateAppointmentOpened.value = !updateAppointmentOpened.value
     return
   }
 

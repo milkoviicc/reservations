@@ -165,12 +165,12 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
     </div>
 
     <div class="flex py-4 sm:py-2">
-      <div class="flex flex-col w-16 gap-2 border-b border-[#B0B0B0]">
+      <div class="flex flex-col w-16 h-full border-b border-[#B0B0B0]">
         <div class="h-[24px]"></div>
         <div
           v-for="day in days"
           :key="day"
-          class="flex items-center justify-center h-20 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
+          class="flex items-center justify-center h-22 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
         >
           {{ day }}
         </div>
@@ -184,7 +184,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         @mouseleave="stopDrag"
         @mousemove="onDrag"
       >
-        <div class="flex flex-col border-b border-[#B0B0B0] min-w-max gap-2">
+        <div class="flex flex-col border-b border-[#B0B0B0] min-w-max">
           <div class="flex h-full w-fit max-w-[660px]">
             <div class="flex">
               <div
@@ -200,9 +200,9 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div
             v-for="day in days"
             :key="day"
-            class="flex h-20 border-t border-[#B0B0B0] py-1 px-2 w-full"
+            class="flex h-full border-t border-[#B0B0B0] w-full max-h-22 py-1 px-2"
           >
-            <div class="flex gap-[1px]">
+            <div class="flex gap-1 max-h-22 h-full">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
