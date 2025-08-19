@@ -8,7 +8,9 @@ export const handleUpdateAppointment = (appointment: Appointment | undefined) =>
   appointmentToUpdate.value = appointment
   if (window.history.length > 1) {
     router.back()
-  } else {
+  } else if (appointment) {
     router.push('/update-appointments')
+  } else {
+    router.push('/')
   }
 }
