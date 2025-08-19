@@ -237,7 +237,7 @@ const callUpdateAppointment = async (e: Event) => {
                 <input
                   type="submit"
                   value="Ažuriraj termin"
-                  class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 cursor-pointer"
+                  class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 text-lg font-semibold cursor-pointer"
                 />
               </div>
             </div>

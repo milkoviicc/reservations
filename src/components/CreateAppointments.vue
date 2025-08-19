@@ -165,9 +165,7 @@ const createNewAppointment = async (e: Event) => {
         <template #footer>
           <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <div
-                class="flex flex-col w-full h-full justify-between pt-4 items-center sm:justify-between sm:pt-0"
-              >
+              <div class="flex flex-col w-full h-full justify-evenly pt-4 items-center sm:pt-0">
                 <div class="flex flex-col gap-2">
                   <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
                   <div
