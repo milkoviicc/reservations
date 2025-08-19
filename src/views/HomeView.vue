@@ -180,7 +180,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
-                      @click="router.push('/all-appointments')"
+                      @click="router.push('/all-appointment')"
                     >
                       Svi termini
                     </button>
@@ -245,7 +245,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       <div class="flex justify-center h-[100px] sm:h-fit items-end sm:items-start pb-4 sm:py-2">
         <button
           class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] !text-5xl plus !font-semibold shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
-          @click="router.push('/create-appointments')"
+          @click="router.push('/create-appointment')"
         >
           +
         </button>
