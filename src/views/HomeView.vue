@@ -264,7 +264,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           @click="toggleCreateAppointmentView()"
         >
           <span
-            class="absolute top-0 left-1/2 transform -translate-x-1/2 text-4xl font-normal w-[50px] h-[45px]"
+            class="absolute top-0 left-1/2 transform -translate-x-1/2 text-5xl leading-12 sm:leading-10 font-normal w-[32px] h-[45px]"
           >
             +
           </span>

@@ -191,7 +191,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="appearance-none w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -203,7 +203,7 @@ const callUpdateAppointment = async (e: Event) => {
                         v-model="startingMinutes"
                         min="0"
                         max="59"
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
@@ -216,7 +216,7 @@ const callUpdateAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -228,7 +228,7 @@ const callUpdateAppointment = async (e: Event) => {
                         placeholder="00"
                         min="0"
                         max="59"
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>

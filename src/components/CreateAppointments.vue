@@ -113,12 +113,8 @@ const createNewAppointment = async (e: Event) => {
 
 <template>
   <PrimeToast :position="toastPosition" />
-  <main class="h-[100dvh] sm:h-fit !overflow-visible">
-    <form
-      class="relative w-full h-full flex flex-col gap-4"
-      method="POST"
-      @submit="createNewAppointment"
-    >
+  <main class="h-[100dvh] sm:h-fit relative">
+    <form class="w-full h-full flex flex-col gap-4" method="POST" @submit="createNewAppointment">
       <button class="px-4 py-2 cursor-pointer" @click="toggleCreateAppointmentView()">
         <img src="../assets/arrow-left.png" alt="Nazad" width="28" />
       </button>
@@ -158,16 +154,16 @@ const createNewAppointment = async (e: Event) => {
         locale="hr"
         :masks="{ weekdays: 'WWW', title: 'MMMM' }"
         :color="selectedColor"
-        class="flex-1 w-full !mt-4 max-w-[301.6px] min-w-[301.6px] h-full !rounded-b-md !rounded-t-none !border-t-[#c7c7c7] relative !border-none"
+        class="flex-1 w-full !mt-4 max-w-[301.6px] min-w-[301.6px] h-full !rounded-t-none !border-t-[#c7c7c7] !border-none"
         @update:model-value="handleDateChange"
         disable-page-swipe
       >
         <template #footer>
           <div class="flex flex-col h-full sm:min-h-[200px] items-center justify-between w-full">
             <div class="flex flex-col items-center gap-1 w-full h-full">
-              <div class="flex flex-col w-full h-full justify-evenly pt-4 items-center sm:pt-0">
+              <div class="flex flex-col w-full h-full justify-between items-center">
                 <div class="flex flex-col gap-2">
-                  <h3 class="text-[#484848] text-xl sm:pt-2 text-center">Odaberi vrijeme</h3>
+                  <h3 class="text-[#484848] text-xl pt-4 sm:pt-2 text-center">Odaberi vrijeme</h3>
                   <div
                     class="flex gap-[3px] w-full h-fit justify-center px-2 font-['Istok web', 'sans-serif']"
                   >
@@ -179,7 +175,7 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="appearance-none w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="appearance-none w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -191,7 +187,7 @@ const createNewAppointment = async (e: Event) => {
                         v-model="appointmentStartingMinutes"
                         min="0"
                         max="59"
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
@@ -204,7 +200,7 @@ const createNewAppointment = async (e: Event) => {
                         min="1"
                         max="23"
                         required
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Sati</p>
                     </div>
@@ -216,22 +212,22 @@ const createNewAppointment = async (e: Event) => {
                         placeholder="00"
                         min="0"
                         max="59"
-                        class="w-16 h-16 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
+                        class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                       />
                       <p class="absolute top-16 left-0 text-xs">Minute</p>
                     </div>
                   </div>
                 </div>
-                <input
-                  type="submit"
-                  value="Dodaj termin"
-                  class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 text-lg font-semibold cursor-pointer"
-                />
               </div>
             </div>
           </div>
         </template>
       </VDatePicker>
+      <input
+        type="submit"
+        value="Dodaj termin"
+        class="w-full sm:min-w-[670px] bg-[#F54242] text-white px-8 py-3 sm:px-14 sm:py-2 text-lg font-semibold cursor-pointer absolute bottom-0 left-0"
+      />
     </form>
   </main>
 </template>
