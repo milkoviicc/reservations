@@ -47,7 +47,7 @@ const callDeleteAppointment = async (appointmentId: string) => {
 
 <template>
   <main
-    class="w-full h-full flex justify-center items-center"
+    class="w-full h-[100dvh] flex justify-center items-center"
     v-motion="'transition'"
     :initial="{ opacity: 0 }"
     :enter="{ opacity: 1 }"
@@ -55,7 +55,7 @@ const callDeleteAppointment = async (appointmentId: string) => {
     :duration="500"
   >
     <div
-      class="flex flex-col justify-between w-full sm:max-w-[600px] h-full sm:max-h-[90%] bg-white"
+      class="flex flex-col justify-between w-full sm:max-w-[600px] h-[100dvh] sm:max-h-[90%] bg-white"
     >
       <PrimeToast :position="toastPosition" />
       <div class="flex flex-col gap-2 h-full flex-1">

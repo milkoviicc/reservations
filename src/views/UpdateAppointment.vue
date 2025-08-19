@@ -112,14 +112,14 @@ const callUpdateAppointment = async (e: Event) => {
 <template>
   <PrimeToast :position="toastPosition" />
   <main
-    class="flex justify-center items-center w-full h-full"
+    class="flex justify-center items-center w-full h-[100dvh]"
     v-motion="'transition'"
     :initial="{ opacity: 0 }"
     :enter="{ opacity: 1 }"
     :leave="{ opacity: 0 }"
     :duration="500"
   >
-    <div class="w-full h-full flex flex-col gap-4 bg-white sm:max-w-[600px] sm:max-h-[95%]">
+    <div class="w-full h-[100dvh] flex flex-col gap-4 bg-white sm:max-w-[600px] sm:max-h-[95%]">
       <form class="w-full h-full flex flex-col gap-4" method="PUT" @submit="callUpdateAppointment">
         <button class="px-4 py-2 cursor-pointer" @click="hideUpdateAppointments()">
           <img src="../assets/arrow-left.png" alt="Nazad" width="28" />

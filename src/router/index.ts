@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import AllAppointments from '@/views/AllAppointments.vue'
-import UpdateAppointments from '@/views/UpdateAppointment.vue'
-import CreateAppointments from '@/views/CreateAppointment.vue'
+import UpdateAppointment from '@/views/UpdateAppointment.vue'
+import CreateAppointment from '@/views/CreateAppointment.vue'
 // import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -23,19 +23,19 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: '/all-appointments',
-      name: 'all appointments',
+      path: '/all-appointment',
+      name: 'all appointment',
       component: AllAppointments,
     },
     {
       path: '/create-appointment',
       name: 'create appointment',
-      component: CreateAppointments,
+      component: CreateAppointment,
     },
     {
       path: '/update-appointment',
       name: 'update appointment',
-      component: UpdateAppointments,
+      component: UpdateAppointment,
     },
   ],
 })
