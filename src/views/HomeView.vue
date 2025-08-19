@@ -112,7 +112,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 
 <template>
   <main
-    class="flex justify-center items-center w-full h-full"
+    class="flex justify-center items-center w-full h-screen"
     v-motion="'transition'"
     :initial="{ opacity: 0 }"
     :enter="{ opacity: 1 }"
@@ -120,7 +120,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
     :duration="500"
   >
     <div
-      class="w-full h-full sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
+      class="w-full h-screen sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
     >
       <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
         <div class="flex gap-2 py-4 text-black justify-center">

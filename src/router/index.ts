@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import AllAppointments from '@/views/AllAppointments.vue'
-import UpdateAppointments from '@/views/UpdateAppointments.vue'
-import CreateAppointments from '@/views/CreateAppointments.vue'
-import { useAuthStore } from '@/stores/auth'
+import UpdateAppointments from '@/views/UpdateAppointment.vue'
+import CreateAppointments from '@/views/CreateAppointment.vue'
+// import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,9 +13,9 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: {
+      /* meta: {
         requiresAuth: true,
-      },
+      }, */
     },
     {
       path: '/login',
@@ -28,19 +28,19 @@ const router = createRouter({
       component: AllAppointments,
     },
     {
-      path: '/create-appointments',
-      name: 'create appointments',
+      path: '/create-appointment',
+      name: 'create appointment',
       component: CreateAppointments,
     },
     {
-      path: '/update-appointments',
-      name: 'update appointments',
+      path: '/update-appointment',
+      name: 'update appointment',
       component: UpdateAppointments,
     },
   ],
 })
 
-router.beforeEach((to, _from, next) => {
+/* router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore()
   authStore.loadFromLocalStorage()
 
@@ -49,6 +49,6 @@ router.beforeEach((to, _from, next) => {
   } else {
     next()
   }
-})
+}) */
 
 export default router
