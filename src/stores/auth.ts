@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
+import Cookies from 'js-cookie'
 
 interface User {
   id: string
@@ -25,8 +26,8 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     loadFromLocalStorage(): void {
-      const token = localStorage.getItem('token')
-      const user = localStorage.getItem('user')
+      const token = Cookies.get('token')
+      const user = Cookies.get('user')
 
       if (token && user) {
         try {
@@ -50,8 +51,8 @@ export const useAuthStore = defineStore('auth', {
       this.user = user
       this.token = user.token
       this.isAuthenticated = true
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('token', user.token)
+      Cookies.set('user', JSON.stringify(user), { expires: 2 })
+      Cookies.set('token', user.token, { expires: 2 })
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
     },
@@ -60,8 +61,8 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.token = null
       this.isAuthenticated = false
-      localStorage.removeItem('user')
-      localStorage.removeItem('token')
+      Cookies.remove('user')
+      Cookies.remove('token')
     },
   },
 })

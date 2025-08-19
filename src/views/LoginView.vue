@@ -76,7 +76,7 @@ const handleLogin = async (e: Event) => {
     <input
       type="submit"
       value="Prijavi se"
-      class="w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
+      class="max-w-[240px] w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
     />
   </form>
   <PrimeToast :position="toastPosition" />
