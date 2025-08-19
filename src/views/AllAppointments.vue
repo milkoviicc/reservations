@@ -2,7 +2,6 @@
 import { EllipsisVertical } from 'lucide-vue-next'
 import { useToast } from 'primevue/usetoast'
 import { useAppointments } from '@/composables/useAppointment'
-import { handleUpdateAppointment } from '@/helpers/appointmentsRefHelper'
 import { useScreen } from '@/composables/useScreen'
 import { getAppointmentText, getFormattedDateParts } from '@/helpers/dataHelpers'
 import router from '@/router'
@@ -10,8 +9,15 @@ import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue'
 import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
 import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue'
 import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
+import ScrollableContainer from '@/components/ScrollableContainer.vue'
+import { onMounted } from 'vue'
 
-const { dailyAppointments, deleteAppointment } = useAppointments()
+const { dailyAppointments, getDailyAppointments, deleteAppointment, handleUpdateAppointment } =
+  useAppointments()
+
+onMounted(() => {
+  getDailyAppointments(new Date())
+})
 
 const { toastPosition } = useScreen()
 const { currentDate } = useAppointments()
@@ -88,7 +94,11 @@ const callDeleteAppointment = async (appointmentId: string) => {
                   <div class="flex gap-2 items-center">
                     <div class="bg-[#F54242] w-[5px] h-[5px] rounded-full"></div>
                     <p class="text-[#454545] text-[11px] font-medium">
-                      {{ appointment.startTime }} - {{ appointment.endTime }}
+                      {{ appointment.startTime.split(':')[0] }}:{{
+                        appointment.startTime.split(':')[1]
+                      }}- {{ appointment.endTime.split(':')[0] }}:{{
+                        appointment.endTime.split(':')[1]
+                      }}
                     </p>
                   </div>
                 </div>

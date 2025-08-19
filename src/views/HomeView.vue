@@ -42,19 +42,19 @@ const changeCalendarDisplay = (display: string) => {
 
 const pxPerMinute = 1
 const workDayStart = '09:00'
-const workDayEnd = '20:00'
+const workDayEnd = '19:00'
 
 // compute total width of the workday (in px)
 const workDayTotalWidthPx = computed(() => {
-  return (timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) * pxPerMinute
+  return timeToMinutes(workDayEnd) - timeToMinutes(workDayStart) * pxPerMinute
 })
 
 const hourTicks = computed(() => {
   const startH = Number(workDayStart.split(':')[0])
-  const hoursCount = Math.floor((timeToMinutes(workDayEnd) - timeToMinutes(workDayStart)) / 60)
+  const endH = Number(workDayEnd.split(':')[0])
+  const hoursCount = endH - startH
   return Array.from({ length: hoursCount }, (_, i) => startH + i)
 })
-
 function buildBlocksForAppointments(appointments: { startTime: string; endTime: string }[]) {
   const sorted = (appointments || [])
     .slice()
@@ -68,6 +68,9 @@ function buildBlocksForAppointments(appointments: { startTime: string; endTime: 
     const endMin = timeToMinutes(app.endTime)
     const currentMin = timeToMinutes(currentTime)
 
+    const workEndMin = timeToMinutes(workDayEnd)
+    if (startMin >= workEndMin) break
+
     if (startMin > currentMin) {
       const dur = startMin - currentMin
       blocks.push({
@@ -77,6 +80,7 @@ function buildBlocksForAppointments(appointments: { startTime: string; endTime: 
         width: dur * pxPerMinute,
       })
     }
+    currentTime = app.endTime
 
     const durApp = Math.max(0, endMin - startMin)
     if (durApp > 0) {
@@ -180,7 +184,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
-                      @click="router.push('/all-appointment')"
+                      @click="router.push('/all-appointments')"
                     >
                       Svi termini
                     </button>

@@ -31,7 +31,7 @@ function onDrag(e: MouseEvent) {
 
 const days: string[] = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet']
 const workDayStart = '09:00'
-const workDayEnd = '20:00'
+const workDayEnd = '19:00'
 const pxPerMinute = 1
 
 const monthsHr = [
@@ -185,10 +185,10 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         @mousemove="onDrag"
       >
         <div class="flex flex-col border-b border-[#B0B0B0] min-w-max">
-          <div class="flex h-full w-fit max-w-[660px]">
+          <div class="flex h-full w-fit max-w-[600px]">
             <div class="flex">
               <div
-                v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
+                v-for="hour in Array.from({ length: 10 }, (_, i) => i + 9)"
                 :key="hour"
                 class="w-[60px] text-center text-[#282828] font-medium"
               >

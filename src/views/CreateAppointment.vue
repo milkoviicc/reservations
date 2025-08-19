@@ -8,12 +8,6 @@ import { useToast } from 'primevue/usetoast'
 import { onMounted, ref } from 'vue'
 const date = ref(new Date())
 
-const props = defineProps<{
-  updateAppointments: (newDate: Date) => void
-}>()
-
-const updateAppointments = props.updateAppointments
-
 const { createAppointment } = useAppointments()
 
 const { toastPosition } = useScreen()
@@ -74,9 +68,7 @@ const createNewAppointment = async (e: Event) => {
       detail: `Uspješno si kreirala novi termin.`,
       life: 2500,
     })
-
     setTimeout(() => {
-      updateAppointments(date.value)
       hideCreateAppointments()
     }, 2500)
   } else {

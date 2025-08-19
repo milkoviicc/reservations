@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { useAppointments } from '@/composables/useAppointment'
 import { useScreen } from '@/composables/useScreen'
-import { appointmentToUpdate, handleUpdateAppointment } from '@/helpers/appointmentsRefHelper'
 import { formatForApi } from '@/helpers/dataHelpers'
 import type { Appointment } from '@/lib/types'
+import router from '@/router'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref } from 'vue'
 const date = ref(new Date())
 
-const { updateAppointment } = useAppointments()
-
-const props = defineProps<{
-  updateAppointments: (newDate: Date) => void
-}>()
-
-const updateAppointments = props.updateAppointments
+const { updateAppointment, appointmentToUpdate } = useAppointments()
 
 const { toastPosition } = useScreen()
 const selectedColor = ref('red')
@@ -33,8 +27,10 @@ const handleDateChange = (newDate: Date) => {
 }
 
 const hideUpdateAppointments = () => {
-  if (appointmentToUpdate.value) {
-    handleUpdateAppointment(appointmentToUpdate.value)
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/')
   }
 }
 
@@ -72,7 +68,6 @@ const callUpdateAppointment = async (e: Event) => {
       })
 
       setTimeout(() => {
-        updateAppointments(date.value)
         hideUpdateAppointments()
       }, 2500)
     } else {

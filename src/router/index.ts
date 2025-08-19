@@ -26,19 +26,28 @@ const router = createRouter({
       },
     },
     {
-      path: '/all-appointment',
+      path: '/all-appointments',
       name: 'all appointment',
       component: AllAppointments,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/create-appointment',
       name: 'create appointment',
       component: CreateAppointment,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/update-appointment',
       name: 'update appointment',
       component: UpdateAppointment,
+      meta: {
+        requiresAuth: true,
+      },
     },
   ],
 })
