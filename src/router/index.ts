@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import AllAppointments from '@/components/AllAppointments.vue'
-import UpdateAppointments from '@/components/UpdateAppointments.vue'
-import CreateAppointments from '@/components/CreateAppointments.vue'
+import AllAppointments from '@/views/AllAppointments.vue'
+import UpdateAppointments from '@/views/UpdateAppointments.vue'
+import CreateAppointments from '@/views/CreateAppointments.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({

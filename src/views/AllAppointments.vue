@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { EllipsisVertical } from 'lucide-vue-next'
-import ScrollableContainer from './ScrollableContainer.vue'
-import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
-import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
-import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
-import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
 import { useToast } from 'primevue/usetoast'
 import { useAppointments } from '@/composables/useAppointment'
 import { handleUpdateAppointment } from '@/helpers/appointmentsRefHelper'
 import { useScreen } from '@/composables/useScreen'
 import { getAppointmentText, getFormattedDateParts } from '@/helpers/dataHelpers'
 import router from '@/router'
+import DropdownMenu from '@/components/ui/dropdown-menu/DropdownMenu.vue'
+import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
+import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuContent.vue'
+import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
 
 const { dailyAppointments, deleteAppointment } = useAppointments()
 
