@@ -11,6 +11,7 @@ import type { Appointment } from '@/lib/types'
 
 const weeklyAppointments = ref<Appointment[]>([])
 const dailyAppointments = ref<Appointment[]>([])
+const currentDate = ref<Date>(new Date())
 const brojMusterija = computed((): number => {
   return dailyAppointments.value.length
 })
@@ -22,6 +23,7 @@ export function useAppointments() {
 
   const getDailyAppointments = async (date: Date) => {
     dailyAppointments.value = await fetchDailyAppointments(date)
+    currentDate.value = date
   }
 
   const createAppointment = async (newAppointment: {
@@ -50,6 +52,7 @@ export function useAppointments() {
     weeklyAppointments,
     dailyAppointments,
     brojMusterija,
+    currentDate,
     getWeeklyAppointments,
     getDailyAppointments,
     createAppointment,

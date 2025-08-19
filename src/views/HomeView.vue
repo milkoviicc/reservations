@@ -1,21 +1,10 @@
 <script setup lang="ts">
-import AllAppointments from '@/components/AllAppointments.vue'
-import CreateAppointment from '@/components/CreateAppointments.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
-import UpdateAppointments from '@/components/UpdateAppointments.vue'
 import WeeklyAppointments from '@/components/WeeklyAppointments.vue'
 import { useAppointments } from '@/composables/useAppointment'
-import {
-  allAppointmentsRef,
-  createAppointmentRef,
-  updateAppointmentRef,
-  allAppointmentsOpened,
-  createAppointmentOpened,
-  toggleAllAppointmentsView,
-  updateAppointmentOpened,
-  toggleCreateAppointmentView,
-} from '@/helpers/appointmentsRefHelper'
+
 import { getAppointmentText, getFormattedDateParts, timeToMinutes } from '@/helpers/dataHelpers'
+import router from '@/router'
 import { computed, onMounted, ref } from 'vue'
 
 const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
@@ -41,18 +30,8 @@ const handleDateChange = async (newDate: Date) => {
 
   if (currentDisplay.value === 'dan') {
     await getDailyAppointments(newDate)
-    if (allAppointmentsOpened.value) {
-      allAppointmentsOpened.value = !allAppointmentsOpened.value
-    }
   }
 }
-
-const allAppointmentsDateData = computed(() => ({
-  date: date.value,
-  day: formattedDay.value,
-  month: formattedMonth.value,
-  weekday: formattedWeekday.value,
-}))
 
 const currentDisplay = ref('dan')
 const changeCalendarDisplay = (display: string) => {
@@ -132,9 +111,16 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
 </script>
 
 <template>
-  <main class="h-[100dvh] overflow-hidden flex items-center">
+  <main
+    class="flex justify-center items-center w-full h-full"
+    v-motion="'transition'"
+    :initial="{ opacity: 0 }"
+    :enter="{ opacity: 1 }"
+    :leave="{ opacity: 0 }"
+    :duration="500"
+  >
     <div
-      class="h-[100dvh] w-full sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
+      class="w-full h-full sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
     >
       <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
         <div class="flex gap-2 py-4 text-black justify-center">
@@ -194,7 +180,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
-                      @click="toggleAllAppointmentsView()"
+                      @click="router.push('/all-appointments')"
                     >
                       Svi termini
                     </button>
@@ -256,57 +242,13 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           <WeeklyAppointments />
         </div>
       </div>
-      <div
-        class="flex h-[100px] sm:h-fit items-end sm:items-start w-full justify-center pb-4 sm:py-2"
-      >
+      <div class="flex justify-center h-[100px] sm:h-fit items-end sm:items-start pb-4 sm:py-2">
         <button
-          class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] relative cursor-pointer shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
-          @click="toggleCreateAppointmentView()"
+          class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] !text-5xl plus !font-semibold shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
+          @click="router.push('/create-appointments')"
         >
-          <span
-            class="absolute top-0 left-1/2 transform -translate-x-1/2 text-5xl leading-12 sm:leading-10 font-normal w-[32px] h-[45px]"
-          >
-            +
-          </span>
+          +
         </button>
-      </div>
-
-      <div
-        ref="allAppointmentsRef"
-        v-if="allAppointmentsOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full flex flex-col bg-white z-10 pt-2 rounded-md h-full sm:h-fit sm:min-h-[650px] overflow-y-hidden"
-        v-motion="'transition'"
-        :initial="{ opacity: 0, translateX: 100 }"
-        :enter="{ opacity: 1, translateX: 0 }"
-        :leave="{ opacity: 0, translateX: 100 }"
-        :duration="200"
-      >
-        <AllAppointments :data="allAppointmentsDateData" />
-      </div>
-
-      <div
-        ref="createAppointmentRef"
-        v-if="createAppointmentOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 pt-2 rounded-md w-full sm:w-[670px] sm:h-fit h-full"
-        v-motion="'transition'"
-        :initial="{ opacity: 0, translateX: 100 }"
-        :enter="{ opacity: 1, translateX: 0 }"
-        :leave="{ opacity: 0, translateX: 100 }"
-        :duration="200"
-      >
-        <CreateAppointment :updateAppointments="handleDateChange" />
-      </div>
-      <div
-        ref="updateAppointmentRef"
-        v-if="updateAppointmentOpened"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-white z-10 rounded-md pt-2 w-full sm:w-[670px] h-full sm:h-fit"
-        v-motion="'transition'"
-        :initial="{ opacity: 0, translateX: 100 }"
-        :enter="{ opacity: 1, translateX: 0 }"
-        :leave="{ opacity: 0, translateX: 100 }"
-        :duration="200"
-      >
-        <UpdateAppointments :updateAppointments="handleDateChange" />
       </div>
     </div>
   </main>
