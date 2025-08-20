@@ -6,7 +6,7 @@ import axios from 'axios'
 export const fetchWeeklyAppointments = async (startDate: Date, endDate: Date) => {
   try {
     const res = await axios.get(
-      `http://91.99.227.117/api/appointments/date-range?startDate=${formatForApi(startDate)}&endDate=${formatForApi(endDate)}`,
+      `http://91.99.227.117/api/appointments/date-range?startDate=${formatForApi(startDate)}&endDate=${formatForApi(endDate)}&timestamp=${Date.now()}`,
     )
     if (res.status === 200) {
       return res.data
@@ -19,7 +19,9 @@ export const fetchWeeklyAppointments = async (startDate: Date, endDate: Date) =>
 export const fetchDailyAppointments = async (date: Date) => {
   const formattedDate = date.toISOString().split('T')[0]
   try {
-    const res = await axios.get(`http://91.99.227.117/api/appointments/date/${formattedDate}`)
+    const res = await axios.get(
+      `http://91.99.227.117/api/appointments/date/${formattedDate}?timestamp=${Date.now()}`,
+    )
 
     if (res.status === 200) {
       return res.data

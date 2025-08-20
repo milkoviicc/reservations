@@ -166,7 +166,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
 
     <div class="flex py-4 sm:py-2">
       <div class="flex flex-col w-16 h-full border-b border-[#B0B0B0]">
-        <div class="h-[24px]"></div>
+        <div class="h-8"></div>
         <div
           v-for="day in days"
           :key="day"
@@ -188,9 +188,9 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div class="flex h-full w-fit max-w-[600px]">
             <div class="flex">
               <div
-                v-for="hour in Array.from({ length: 10 }, (_, i) => i + 9)"
+                v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
                 :key="hour"
-                class="w-[60px] text-center text-[#282828] font-medium"
+                class="relative w-[60px] text-center text-[#282828] font-medium h-8 after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
               >
                 {{ hour.toString().padStart(2, '0') }}:00
               </div>
@@ -200,9 +200,9 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div
             v-for="day in days"
             :key="day"
-            class="flex h-full border-t border-[#B0B0B0] w-full max-h-22 py-1 px-2"
+            class="flex h-full border-t border-[#B0B0B0] w-[660px] max-h-22 py-1"
           >
-            <div class="flex gap-1 max-h-22 h-full">
+            <div class="flex gap-1 max-h-22 h-full !ml-[30px] w-[600px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"

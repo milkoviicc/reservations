@@ -51,7 +51,7 @@ const workDayTotalWidthPx = computed(() => {
 const hourTicks = computed(() => {
   const startH = Number(workDayStart.split(':')[0])
   const endH = Number(workDayEnd.split(':')[0])
-  const hoursCount = endH - startH
+  const hoursCount = endH - startH + 1
   return Array.from({ length: hoursCount }, (_, i) => startH + i)
 })
 function buildBlocksForAppointments(appointments: { startTime: string; endTime: string }[]) {
@@ -201,19 +201,19 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                       <div
                         v-for="h in hourTicks"
                         :key="h"
-                        class="min-w-[60px] text-center text-[#282828] font-medium"
+                        class="relative min-w-[60px] text-center text-[#282828] font-medium after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
                       >
                         {{ h.toString().padStart(2, '0') }}:00
                       </div>
                     </div>
                   </div>
 
-                  <div class="flex items-center h-14 pb-2">
+                  <div class="flex items-center h-14 pb-2 !ml-[30px]">
                     <div
                       :style="{ width: workDayTotalWidthPx + 'px' }"
                       class="h-14 flex items-center"
                     >
-                      <div class="flex gap-1 w-full h-max px-[30px] pb-2">
+                      <div class="flex w-full gap-1 h-max pb-2">
                         <div
                           v-for="(block, idx) in dailyBlocks"
                           :key="idx"
