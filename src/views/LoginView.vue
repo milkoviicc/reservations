@@ -54,30 +54,32 @@ const handleLogin = async (e: Event) => {
 </script>
 
 <template>
-  <form
-    class="flex flex-col gap-4 justify-center items-center w-full h-full"
-    method="POST"
-    @submit="handleLogin"
-  >
-    <input
-      type="text"
-      placeholder="Korisničko ime"
-      class="bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
-      v-model="username"
-      required
-    />
-    <input
-      type="password"
-      placeholder="Lozinka"
-      class="bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
-      v-model="password"
-      required
-    />
-    <input
-      type="submit"
-      value="Prijavi se"
-      class="max-w-[240px] w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
-    />
-  </form>
+  <main class="w-full h-full flex justify-center items-center bg-white">
+    <form
+      class="flex flex-col gap-4 justify-center items-center w-full h-full"
+      method="POST"
+      @submit="handleLogin"
+    >
+      <input
+        type="text"
+        placeholder="Korisničko ime"
+        class="bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
+        v-model="username"
+        required
+      />
+      <input
+        type="password"
+        placeholder="Lozinka"
+        class="bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
+        v-model="password"
+        required
+      />
+      <input
+        type="submit"
+        value="Prijavi se"
+        class="max-w-[240px] w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
+      />
+    </form>
+  </main>
   <PrimeToast :position="toastPosition" />
 </template>
