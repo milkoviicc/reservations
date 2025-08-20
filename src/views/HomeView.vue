@@ -123,7 +123,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
     :duration="500"
   >
     <div
-      class="w-full h-[100dvh] sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
+      class="w-full h-[100dvh] sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center"
     >
       <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
         <div class="flex gap-2 py-4 text-black justify-center">
