@@ -24,7 +24,7 @@ onMounted(() => {
   getDailyAppointments(currentDate.value)
 })
 
-const { toastPosition } = useScreen()
+const { toastPosition, screenWidth } = useScreen()
 
 const toast = useToast()
 
@@ -69,7 +69,7 @@ const callDeleteAppointment = async (appointmentId: string) => {
     >
       <PrimeToast :position="toastPosition" />
       <div class="flex flex-col gap-2 h-full flex-1">
-        <button class="px-4 py-2 cursor-pointer" @click="hideAppointments">
+        <button class="px-4 py-2 cursor-pointer" @click="hideAppointments" v-if="screenWidth > 640">
           <img src="../assets/arrow-left.png" alt="" width="28" />
         </button>
         <div class="w-full h-fit flex flex-col px-4 pt-16 sm:pt-8">

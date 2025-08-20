@@ -11,6 +11,7 @@ import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import Aura from '@primeuix/themes/aura'
 import Toast from 'primevue/toast'
+import 'normalize.css'
 
 const app = createApp(App)
 
