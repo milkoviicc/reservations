@@ -31,7 +31,7 @@ const handleLogin = async (e: Event) => {
 
         toast.add({
           severity: 'success',
-          summary: 'Successful login',
+          summary: 'Uspješna prijava',
           detail: `Bok ${user.firstName}, dobrodošla.`,
           life: 1500,
         })
@@ -44,7 +44,7 @@ const handleLogin = async (e: Event) => {
       console.log(error)
       toast.add({
         severity: 'error',
-        summary: 'Error',
+        summary: 'Greška',
         detail: `Pogrešno korisničko ime ili lozinka, molimo pokušajte ponovno.`,
         life: 3000,
       })
