@@ -63,21 +63,21 @@ const handleLogin = async (e: Event) => {
       <input
         type="text"
         placeholder="Korisničko ime"
-        class="bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
+        class="bg-white text-black border border-[rgba(0,0,0,1)] shadow-[0_4px_3px_0px_rgba(0,0,0,0.5)] outline-none rounded-lg px-4 py-3"
         v-model="username"
         required
       />
       <input
         type="password"
         placeholder="Lozinka"
-        class="bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.3)] text-white outline-none rounded-lg px-4 py-3"
+        class="bg-white text-black border border-[rgba(0,0,0,1)] shadow-[0_4px_3px_0px_rgba(0,0,0,0.5)] outline-none rounded-lg px-4 py-3"
         v-model="password"
         required
       />
       <input
         type="submit"
         value="Prijavi se"
-        class="max-w-[240px] w-full px-2 py-2 bg-green-800 text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
+        class="max-w-[240px] w-full px-2 py-2 bg-green-800 shadow-[0_4px_3px_0px_rgba(0,0,0,0.5)] text-white outline-none rounded-full cursor-pointer hover:bg-green-500 transition-all duration-300"
       />
     </form>
   </main>
