@@ -201,7 +201,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                       <div
                         v-for="h in hourTicks"
                         :key="h"
-                        class="relative min-w-[60px] text-center text-[#282828] font-medium after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
+                        class="relative min-w-[60px] text-center text-[#282828] font-medium"
                       >
                         {{ h.toString().padStart(2, '0') }}:00
                       </div>
@@ -224,9 +224,15 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                             v-if="block.color === '#F54242'"
                             class="absolute -top-6 z-50 text-xs flex flex-col items-center justify-center bg-white text-gray-800 px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                           >
-                            <p>{{ block.startTime }}</p>
+                            <p>
+                              {{ block.startTime.split(':')[0] }}:{{
+                                block.startTime.split(':')[1]
+                              }}
+                            </p>
                             <p>-</p>
-                            <p>{{ block.endTime }}</p>
+                            <p>
+                              {{ block.endTime.split(':')[0] }}:{{ block.endTime.split(':')[1] }}
+                            </p>
                           </div>
                         </div>
                       </div>

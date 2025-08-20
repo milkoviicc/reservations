@@ -166,7 +166,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
 
     <div class="flex py-4 sm:py-2">
       <div class="flex flex-col w-16 h-full border-b border-[#B0B0B0]">
-        <div class="h-8"></div>
+        <div class="h-6"></div>
         <div
           v-for="day in days"
           :key="day"
@@ -190,7 +190,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
               <div
                 v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
                 :key="hour"
-                class="relative w-[60px] text-center text-[#282828] font-medium h-8 after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
+                class="relative w-[60px] text-center text-[#282828] font-medium h-6"
               >
                 {{ hour.toString().padStart(2, '0') }}:00
               </div>
@@ -202,20 +202,21 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
             :key="day"
             class="flex h-full border-t border-[#B0B0B0] w-[660px] max-h-22 py-1"
           >
-            <div class="flex gap-1 max-h-22 h-full !ml-[30px] w-[600px]">
+            <div class="flex max-h-22 h-full gap-1 !ml-[30px] w-[600px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
-                :style="{ width: block.width + 'px', backgroundColor: block.color }"
+                :style="{ width: block.width + 'px' }"
                 class="relative h-20 flex items-center justify-center rounded group"
               >
+                <div class="w-full h-full" :style="{ backgroundColor: block.color }"></div>
                 <div
                   v-if="block.color === '#F54242'"
                   class="absolute -top-6 z-50 text-xs flex flex-col items-center justify-center bg-white text-gray-800 px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                 >
-                  <p>{{ block.startTime }}</p>
+                  <p>{{ block.startTime.split(':')[0] }}:{{ block.startTime.split(':')[1] }}</p>
                   <p>-</p>
-                  <p>{{ block.endTime }}</p>
+                  <p>{{ block.endTime.split(':')[0] }}:{{ block.endTime.split(':')[1] }}</p>
                 </div>
               </div>
             </div>
