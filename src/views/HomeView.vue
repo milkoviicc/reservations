@@ -201,14 +201,14 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                       <div
                         v-for="h in hourTicks"
                         :key="h"
-                        class="relative min-w-[60px] text-center text-[#282828] font-medium"
+                        class="relative min-w-[60px] text-center text-[#282828] font-medium after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
                       >
                         {{ h.toString().padStart(2, '0') }}:00
                       </div>
                     </div>
                   </div>
 
-                  <div class="flex items-center h-14 pb-2 !ml-[30px]">
+                  <div class="flex items-center h-14 !ml-[30px]">
                     <div
                       :style="{ width: workDayTotalWidthPx + 'px' }"
                       class="h-14 flex items-center"
@@ -218,7 +218,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                           v-for="(block, idx) in dailyBlocks"
                           :key="idx"
                           :style="{ width: block.width + 'px', backgroundColor: block.color }"
-                          class="relative h-14 flex items-center justify-center rounded group"
+                          class="relative h-14 flex items-center justify-center rounded-[5px] group"
                         >
                           <div
                             v-if="block.color === '#F54242'"
