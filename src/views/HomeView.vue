@@ -123,7 +123,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
     :duration="500"
   >
     <div
-      class="w-full h-[100dvh] sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center"
+      class="w-full h-[100dvh] sm:h-fit bg-white max-w-[640px] sm:w-fit sm:max-w-full flex flex-col items-center justify-between"
     >
       <div class="bg-white rounded-md w-full h-fit max-w-[640px] sm:w-fit sm:max-w-full">
         <div class="flex gap-2 py-4 text-black justify-center">
@@ -213,7 +213,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                       :style="{ width: workDayTotalWidthPx + 'px' }"
                       class="h-14 flex items-center"
                     >
-                      <div class="flex gap-1 w-full h-max px-2 pb-2">
+                      <div class="flex gap-1 w-full h-max px-[30px] pb-2">
                         <div
                           v-for="(block, idx) in dailyBlocks"
                           :key="idx"
