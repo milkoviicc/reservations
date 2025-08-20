@@ -7,21 +7,20 @@ import { getAppointmentText, getFormattedDateParts, timeToMinutes } from '@/help
 import router from '@/router'
 import { computed, onMounted, ref } from 'vue'
 
-const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
-const date = ref(new Date())
+const { currentDate, getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
 const selectedColor = ref('red')
 const formattedDay = ref<number>(0)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
 
 onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
+  if (currentDate.value) {
+    handleDateChange(currentDate.value)
   }
 })
 
 const handleDateChange = async (newDate: Date) => {
-  date.value = newDate
+  currentDate.value = newDate
   const { day, month, weekday } = getFormattedDateParts(newDate)
 
   formattedDay.value = day
@@ -150,7 +149,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
         </div>
 
         <VDatePicker
-          v-model="date"
+          v-model="currentDate"
           mode="date"
           locale="hr"
           :masks="{ weekdays: 'WWW', title: 'MMMM' }"
@@ -178,7 +177,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </h3>
                     <h4 class="font-semibold text-lg text-[#484848]">{{ formattedWeekday }}</h4>
                   </div>
-                  <div class="w-full flex justify-between pt-12 px-4 box-border">
+                  <div class="w-full flex justify-between pt-6 px-4 box-border">
                     <p class="text-[16px] font-medium text-[#484848]">
                       {{ brojMusterija }} {{ getAppointmentText(brojMusterija) }}
                     </p>
@@ -246,7 +245,9 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
           <WeeklyAppointments />
         </div>
       </div>
-      <div class="flex justify-center h-[100px] sm:h-fit items-end sm:items-start pb-4 sm:py-2">
+      <div
+        class="flex justify-center h-fit items-end sm:items-start py-2 pt-safe-top pb-safe-bottom"
+      >
         <button
           class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] !text-5xl plus !font-semibold shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
           @click="router.push('/create-appointment')"

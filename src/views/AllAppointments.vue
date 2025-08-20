@@ -12,15 +12,19 @@ import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import { onMounted } from 'vue'
 
-const { dailyAppointments, getDailyAppointments, deleteAppointment, handleUpdateAppointment } =
-  useAppointments()
+const {
+  currentDate,
+  dailyAppointments,
+  getDailyAppointments,
+  deleteAppointment,
+  handleUpdateAppointment,
+} = useAppointments()
 
 onMounted(() => {
-  getDailyAppointments(new Date())
+  getDailyAppointments(currentDate.value)
 })
 
 const { toastPosition } = useScreen()
-const { currentDate } = useAppointments()
 
 const toast = useToast()
 
@@ -124,7 +128,7 @@ const callDeleteAppointment = async (appointmentId: string) => {
           </ScrollableContainer>
         </div>
       </div>
-      <div class="flex justify-center h-[100px] sm:h-fit items-end sm:items-start pb-4 sm:py-2">
+      <div class="flex justify-center h-fit py-2 pt-safe-top pb-safe-bottom">
         <button
           class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] !text-5xl plus !font-semibold shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
           @click="router.push('/create-appointment')"

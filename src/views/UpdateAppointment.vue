@@ -11,7 +11,7 @@ const date = ref(new Date())
 
 const { updateAppointment, appointmentToUpdate } = useAppointments()
 
-const { toastPosition } = useScreen()
+const { toastPosition, screenWidth } = useScreen()
 const selectedColor = ref('red')
 
 onMounted(() => {
@@ -116,7 +116,11 @@ const callUpdateAppointment = async (e: Event) => {
   >
     <div class="w-full h-[100dvh] flex flex-col gap-4 bg-white sm:max-w-[600px] sm:max-h-[95%]">
       <form class="w-full h-full flex flex-col gap-4" method="PUT" @submit="callUpdateAppointment">
-        <button class="px-4 py-2 cursor-pointer" @click="hideUpdateAppointments()">
+        <button
+          class="px-4 py-2 cursor-pointer"
+          @click="hideUpdateAppointments()"
+          v-if="screenWidth > 640"
+        >
           <img src="../assets/arrow-left.png" alt="Nazad" width="28" />
         </button>
 
