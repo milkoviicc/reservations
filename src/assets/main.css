@@ -14,7 +14,10 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Inter', sans-serif; /* or any font you want */
+  font-size: 16px; /* base size */
+  -webkit-text-size-adjust: 100%; /* stops iOS from auto-scaling text */
+  -ms-text-size-adjust: 100%; /* stops IE/Edge from auto-scaling text */
   overflow-y: hidden;
 }
 
