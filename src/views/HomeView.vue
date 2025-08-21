@@ -208,10 +208,10 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </div>
                   </div>
 
-                  <div class="flex items-center h-14 !ml-[30px]">
+                  <div class="flex items-center h-max !ml-[30px]">
                     <div
                       :style="{ width: workDayTotalWidthPx + 'px' }"
-                      class="h-14 flex items-center"
+                      class="h-full flex items-center"
                     >
                       <div class="flex w-full gap-1 h-max pb-2">
                         <div

@@ -193,6 +193,6 @@ button.plus {
 
 @media screen and (max-width: 640px) {
   .p-toast-top-center {
-    padding: 0 10px;
+    padding: 0 40px;
   }
 }
