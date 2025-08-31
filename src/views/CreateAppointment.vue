@@ -66,11 +66,11 @@ const createNewAppointment = async (e: Event) => {
       severity: 'success',
       summary: 'Uspjeh!',
       detail: `Uspješno si kreirala novi termin.`,
-      life: 2500,
+      life: 1500,
     })
     setTimeout(() => {
       hideCreateAppointments()
-    }, 2500)
+    }, 1500)
   } else {
     if (axios.isAxiosError(res)) {
       const endTimeErr = res.response?.data?.errors?.EndTime[0]
@@ -80,7 +80,7 @@ const createNewAppointment = async (e: Event) => {
           severity: 'error',
           summary: 'Greška!',
           detail: `Vrijeme završetka termina mora biti nakon početka termina.`,
-          life: 2500,
+          life: 1500,
         })
       } else if (
         appointmentOverlaping === 'Appointment time overlaps with an existing appointment.'
@@ -89,14 +89,14 @@ const createNewAppointment = async (e: Event) => {
           severity: 'error',
           summary: 'Greška!',
           detail: `Vrijeme termina preklapa se s postojećim terminom.`,
-          life: 2500,
+          life: 1500,
         })
       } else {
         toast.add({
           severity: 'error',
           summary: 'Greška!',
           detail: `Došlo je do greške, molimo pokušajte ponovno.`,
-          life: 2500,
+          life: 1500,
         })
       }
     }

@@ -33,12 +33,12 @@ const handleLogin = async (e: Event) => {
           severity: 'success',
           summary: 'Uspješna prijava',
           detail: `Bok ${user.firstName}, dobrodošla.`,
-          life: 1500,
+          life: 500,
         })
 
         setTimeout(() => {
           window.location.href = '/'
-        }, 1500)
+        }, 500)
       }
     } catch (error) {
       console.log(error)
@@ -46,7 +46,7 @@ const handleLogin = async (e: Event) => {
         severity: 'error',
         summary: 'Greška',
         detail: `Pogrešno korisničko ime ili lozinka, molimo pokušajte ponovno.`,
-        life: 3000,
+        life: 2000,
       })
     }
   }
