@@ -39,18 +39,15 @@ const hideAppointments = () => {
 const callDeleteAppointment = async (appointmentId: string) => {
   const res = await deleteAppointment(appointmentId)
   if (res === 200) {
+    dailyAppointments.value = dailyAppointments.value.filter(
+      (appt) => appt.appointmentId !== appointmentId,
+    )
     toast.add({
       severity: 'success',
       summary: 'Uspjeh!',
       detail: `Uspješno si obrisala postojeći termin.`,
-      life: 2500,
+      life: 1500,
     })
-    setTimeout(() => {
-      dailyAppointments.value = dailyAppointments.value.filter(
-        (appt) => appt.appointmentId !== appointmentId,
-      )
-      hideAppointments()
-    }, 2500)
   }
 }
 </script>
