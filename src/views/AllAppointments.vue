@@ -11,17 +11,15 @@ import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuConte
 import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue'
 import ScrollableContainer from '@/components/ScrollableContainer.vue'
 import { onMounted } from 'vue'
+import { useAppointmentsStore } from '@/stores/appointments'
 
-const {
-  currentDate,
-  dailyAppointments,
-  getDailyAppointments,
-  deleteAppointment,
-  handleUpdateAppointment,
-} = useAppointments()
+const store = useAppointmentsStore()
+
+const { dailyAppointments, getDailyAppointments, deleteAppointment, handleUpdateAppointment } =
+  useAppointments()
 
 onMounted(() => {
-  getDailyAppointments(currentDate.value)
+  getDailyAppointments(store.currentDate)
 })
 
 const { toastPosition, screenWidth } = useScreen()
@@ -71,11 +69,11 @@ const callDeleteAppointment = async (appointmentId: string) => {
         </button>
         <div class="w-full h-fit flex flex-col px-4 pt-16 sm:pt-8">
           <h3 class="text-[#484848] text-3xl font-bold leading-6">
-            {{ getFormattedDateParts(currentDate).day }}.
-            {{ getFormattedDateParts(currentDate).month }}
+            {{ getFormattedDateParts(store.currentDate).day }}.
+            {{ getFormattedDateParts(store.currentDate).month }}
           </h3>
           <p class="font-semibold text-lg text-[#484848]">
-            {{ getFormattedDateParts(currentDate).weekday }}
+            {{ getFormattedDateParts(store.currentDate).weekday }}
           </p>
         </div>
         <div class="h-full flex flex-col justify-center gap-2 pb-4 flex-1 overflow-hidden">

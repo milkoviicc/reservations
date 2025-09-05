@@ -3,10 +3,10 @@ import { useAppointments } from '@/composables/useAppointment'
 import { useScreen } from '@/composables/useScreen'
 import { getDate, getFormattedDateParts } from '@/helpers/dataHelpers'
 import router from '@/router'
+import { useAppointmentsStore } from '@/stores/appointments'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref } from 'vue'
-const date = ref(new Date())
 
 const { createAppointment } = useAppointments()
 
@@ -17,9 +17,12 @@ const formattedDay = ref<number | null>(null)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
 
+const store = useAppointmentsStore()
+const { getDailyAppointments } = useAppointments()
+
 onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
+  if (store.currentDate) {
+    handleDateChange(store.currentDate)
   }
 })
 
@@ -51,7 +54,7 @@ const hideCreateAppointments = () => {
 const createNewAppointment = async (e: Event) => {
   e.preventDefault()
 
-  const appointmentDate = getDate(date)
+  const appointmentDate = getDate(store.currentDate)
   const newAppointment = {
     clientFirstName: clientName.value.trim().split(' ')[0] || '',
     clientLastName: clientName.value.trim().split(' ').slice(1).join(' ') || '',
@@ -62,6 +65,7 @@ const createNewAppointment = async (e: Event) => {
   }
   const res = await createAppointment(newAppointment)
   if (res.status === 200) {
+    getDailyAppointments(store.currentDate)
     toast.add({
       severity: 'success',
       summary: 'Uspjeh!',
@@ -154,7 +158,7 @@ const createNewAppointment = async (e: Event) => {
         </div>
 
         <VDatePicker
-          v-model="date"
+          v-model="store.currentDate"
           mode="date"
           locale="hr"
           :masks="{ weekdays: 'WWW', title: 'MMMM' }"

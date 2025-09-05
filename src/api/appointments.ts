@@ -17,7 +17,11 @@ export const fetchWeeklyAppointments = async (startDate: Date, endDate: Date) =>
 }
 
 export const fetchDailyAppointments = async (date: Date) => {
-  const formattedDate = date.toISOString().split('T')[0]
+  const formattedDate = [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-')
   try {
     const res = await axios.get(
       `http://91.99.227.117/api/appointments/date/${formattedDate}?timestamp=${Date.now()}`,

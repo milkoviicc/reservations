@@ -1,5 +1,4 @@
 import type { Appointment } from '@/lib/types'
-import type { Ref } from 'vue'
 
 // Hours for the main timeline (like your code)
 export const hours = Array.from({ length: 11 }, (_, i) => i + 9) // 9 → 19
@@ -49,11 +48,13 @@ export const getFormattedDateParts = (date: Date) => {
   }
 }
 
-export const getDate = (date: Ref<Date>) => {
-  const day = String(date.value.getDate()).padStart(2, '0')
-  const month = String(date.value.getMonth() + 1).padStart(2, '0')
-  const year = date.value.getFullYear()
+export const getDate = (date: Date) => {
+  console.log(date)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
 
+  console.log(day, year, month)
   return { day, year, month }
 }
 

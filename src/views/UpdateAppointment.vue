@@ -4,19 +4,20 @@ import { useScreen } from '@/composables/useScreen'
 import { formatForApi } from '@/helpers/dataHelpers'
 import type { Appointment } from '@/lib/types'
 import router from '@/router'
+import { useAppointmentsStore } from '@/stores/appointments'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
 import { onMounted, ref } from 'vue'
-const date = ref(new Date())
 
-const { updateAppointment, appointmentToUpdate } = useAppointments()
+const store = useAppointmentsStore()
+const { updateAppointment, appointmentToUpdate, getDailyAppointments } = useAppointments()
 
 const { toastPosition, screenWidth } = useScreen()
 const selectedColor = ref('red')
 
 onMounted(() => {
-  if (date.value) {
-    handleDateChange(date.value)
+  if (store.currentDate) {
+    handleDateChange(store.currentDate)
   }
 })
 
@@ -53,7 +54,7 @@ const callUpdateAppointment = async (e: Event) => {
       clientFirstName: clientName.value.split(' ')[0],
       clientLastName: clientName.value.split(' ')[1],
       appointmentType: appointmentType.value,
-      date: `${date.value.getFullYear()}-${String(date.value.getMonth() + 1).padStart(2, '0')}-${String(date.value.getDate()).padStart(2, '0')}`,
+      date: `${store.currentDate.getFullYear()}-${String(store.currentDate.getMonth() + 1).padStart(2, '0')}-${String(store.currentDate.getDate()).padStart(2, '0')}`,
       startTime: `${startingHour.value}:${startingMinutes.value || '00'}:00`,
       endTime: `${endingHour.value}:${endingMinutes.value || '00'}:00`,
     }
@@ -66,7 +67,7 @@ const callUpdateAppointment = async (e: Event) => {
         detail: `Uspješno si ažurirala postojeći termin.`,
         life: 1500,
       })
-
+      getDailyAppointments(store.currentDate)
       setTimeout(() => {
         hideUpdateAppointments()
       }, 1500)
@@ -154,7 +155,7 @@ const callUpdateAppointment = async (e: Event) => {
         </div>
 
         <VDatePicker
-          v-model="date"
+          v-model="store.currentDate"
           mode="date"
           locale="hr"
           :masks="{ weekdays: 'WWW', title: 'MMMM' }"

@@ -7,20 +7,23 @@ import { getAppointmentText, getFormattedDateParts, timeToMinutes } from '@/help
 import router from '@/router'
 import { computed, onMounted, ref } from 'vue'
 
-const { currentDate, getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
+import { useAppointmentsStore } from '@/stores/appointments'
+
+const store = useAppointmentsStore()
+
+const { getDailyAppointments, dailyAppointments, brojMusterija } = useAppointments()
 const selectedColor = ref('red')
 const formattedDay = ref<number>(0)
 const formattedMonth = ref('')
 const formattedWeekday = ref('')
 
 onMounted(() => {
-  if (currentDate.value) {
-    handleDateChange(currentDate.value)
+  if (store.currentDate) {
+    handleDateChange(store.currentDate)
   }
 })
 
 const handleDateChange = async (newDate: Date) => {
-  currentDate.value = newDate
   const { day, month, weekday } = getFormattedDateParts(newDate)
 
   formattedDay.value = day
@@ -149,7 +152,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
         </div>
 
         <VDatePicker
-          v-model="currentDate"
+          v-model="store.currentDate"
           mode="date"
           locale="hr"
           :masks="{ weekdays: 'WWW', title: 'MMMM' }"
@@ -183,7 +186,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                     </p>
                     <button
                       class="underline cursor-pointer text-[16px] font-medium text-[#484848]"
-                      @click="router.push('/all-appointments')"
+                      @click="router.push(`/all-appointments`)"
                     >
                       Svi termini
                     </button>
@@ -256,7 +259,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
       >
         <button
           class="bg-[#F54242] text-white w-[50px] h-[45px] rounded-[17px] !text-5xl plus !font-semibold shadow-[0_5px_5px_0_rgba(0,0,0,0.25)]"
-          @click="router.push('/create-appointment')"
+          @click="router.push(`/create-appointment`)"
         >
           +
         </button>

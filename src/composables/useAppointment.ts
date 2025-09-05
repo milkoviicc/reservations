@@ -9,23 +9,25 @@ import {
 } from '../api/appointments'
 import type { Appointment } from '@/lib/types'
 import router from '@/router'
+import { useAppointmentsStore } from '@/stores/appointments'
 
 const weeklyAppointments = ref<Appointment[]>([])
 const dailyAppointments = ref<Appointment[]>([])
-const currentDate = ref<Date>(new Date())
 const brojMusterija = computed((): number => {
   return dailyAppointments.value.length
 })
 const appointmentToUpdate = ref<Appointment | undefined>()
 
 export function useAppointments() {
+  const store = useAppointmentsStore()
   const getWeeklyAppointments = async (startDate: Date, endTime: Date) => {
     weeklyAppointments.value = await fetchWeeklyAppointments(startDate, endTime)
   }
 
   const getDailyAppointments = async (date: Date) => {
     dailyAppointments.value = await fetchDailyAppointments(date)
-    currentDate.value = date
+
+    store.setDate(date)
   }
 
   const createAppointment = async (newAppointment: {
@@ -51,6 +53,7 @@ export function useAppointments() {
   }
 
   const handleUpdateAppointment = (appointment: Appointment | undefined) => {
+    console.log(appointment)
     appointmentToUpdate.value = appointment
     router.push('/update-appointment')
   }
@@ -59,7 +62,6 @@ export function useAppointments() {
     weeklyAppointments,
     dailyAppointments,
     brojMusterija,
-    currentDate,
     appointmentToUpdate,
     handleUpdateAppointment,
     getWeeklyAppointments,
