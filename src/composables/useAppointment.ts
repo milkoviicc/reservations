@@ -16,21 +16,13 @@ const brojMusterija = computed((): number => {
   return dailyAppointments.value.length
 })
 const appointmentToUpdate = ref<Appointment | undefined>()
-
-let debounceTimer: ReturnType<typeof setTimeout> | null = null
-
 export function useAppointments() {
   const getWeeklyAppointments = async (startDate: Date, endTime: Date) => {
     weeklyAppointments.value = await fetchWeeklyAppointments(startDate, endTime)
   }
 
   const getDailyAppointments = async (date: Date) => {
-    if (debounceTimer) clearTimeout(debounceTimer)
-
-    debounceTimer = setTimeout(async () => {
-      dailyAppointments.value = await fetchDailyAppointments(date)
-    }, 200) // wait 100ms after the last change
-
+    dailyAppointments.value = await fetchDailyAppointments(date)
   }
 
   const createAppointment = async (newAppointment: {
