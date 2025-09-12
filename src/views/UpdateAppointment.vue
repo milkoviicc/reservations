@@ -35,10 +35,10 @@ const hideUpdateAppointments = () => {
   }
 }
 
-const startingHour = ref()
-const startingMinutes = ref()
-const endingHour = ref()
-const endingMinutes = ref()
+const startingHour = ref(appointmentToUpdate.value?.startTime.split(':'[0]))
+const startingMinutes = ref(appointmentToUpdate.value?.startTime.split(':'[1]))
+const endingHour = ref(appointmentToUpdate.value?.endTime.split(':'[0]))
+const endingMinutes = ref(appointmentToUpdate.value?.endTime.split(':'[1]))
 const appointmentType = ref(appointmentToUpdate.value?.appointmentType)
 const clientName = ref(
   `${appointmentToUpdate.value?.clientFirstName} ${appointmentToUpdate.value?.clientLastName}`,

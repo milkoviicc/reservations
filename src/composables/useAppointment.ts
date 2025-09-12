@@ -53,7 +53,6 @@ export function useAppointments() {
   }
 
   const handleUpdateAppointment = (appointment: Appointment | undefined) => {
-    console.log(appointment)
     appointmentToUpdate.value = appointment
     router.push('/update-appointment')
   }
