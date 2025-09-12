@@ -31,7 +31,7 @@ export const fetchDailyAppointments = async (date: Date) => {
       return res.data
     }
   } catch {
-    throw new Error('Failed to fetch dailly appointments')
+    throw new Error('Failed to fetch daily appointments')
   }
 }
 
