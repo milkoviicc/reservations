@@ -43,8 +43,8 @@ const changeCalendarDisplay = (display: string) => {
 ///////////
 
 const pxPerMinute = 1
-const workDayStart = '09:00'
-const workDayEnd = '19:00'
+const workDayStart = '07:00'
+const workDayEnd = '21:00'
 
 // compute total width of the workday (in px)
 const workDayTotalWidthPx = computed(() => {
@@ -194,7 +194,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                 </div>
 
                 <ScrollableContainer
-                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-full w-full flex flex-col !mt-1'"
+                  :class="'border-[#C7C7C7] border-t-[1px] border-b-[1px] h-full w-full max-w-[600px] flex flex-col !mt-1'"
                 >
                   <div class="flex items-center">
                     <div

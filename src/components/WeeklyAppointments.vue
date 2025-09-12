@@ -29,9 +29,9 @@ function onDrag(e: MouseEvent) {
   scrollContainer.value.scrollLeft = scrollLeft.value - walk
 }
 
-const days: string[] = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet']
-const workDayStart = '09:00'
-const workDayEnd = '19:00'
+const days: string[] = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub']
+const workDayStart = '07:00'
+const workDayEnd = '21:00'
 const pxPerMinute = 1
 
 const monthsHr = [
@@ -94,7 +94,7 @@ function prevWeek() {
 }
 
 function buildBlocksForDay(day: string) {
-  const dayIndex = days.indexOf(day) + 1 // Mon=1 ... Fri=5 in JS getDay()
+  const dayIndex = days.indexOf(day) + 1
   const dayAppointments = weeklyAppointments.value
     .filter((app) => new Date(app.date).getDay() === dayIndex)
     .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime))
@@ -146,6 +146,7 @@ const weekBlocks = computed(() => {
 })
 
 // === INIT ===
+
 updateWeekString()
 getWeeklyAppointments(startDate.value!, endDate.value!)
 </script>
@@ -170,7 +171,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         <div
           v-for="day in days"
           :key="day"
-          class="flex items-center justify-center h-22 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
+          class="flex items-center justify-center h-22 lg:h-16 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
         >
           {{ day }}
         </div>
@@ -185,10 +186,11 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         @mousemove="onDrag"
       >
         <div class="flex flex-col border-b border-[#B0B0B0] min-w-max">
-          <div class="flex h-full w-fit max-w-[600px]">
+          <div class="flex h-full w-fit max-w-[900px]">
+            -
             <div class="flex">
               <div
-                v-for="hour in Array.from({ length: 11 }, (_, i) => i + 9)"
+                v-for="hour in Array.from({ length: 15 }, (_, i) => i + 7)"
                 :key="hour"
                 class="relative w-[60px] text-center text-[#282828] font-medium h-8 after:content-[''] after:absolute after:top-[24px] after:left-[25px] after:border-[4px] after:border-transparent after:border-t-[#282828]"
               >
@@ -200,14 +202,14 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div
             v-for="day in days"
             :key="day"
-            class="flex h-full border-t border-[#B0B0B0] w-[660px] max-h-22 py-1"
+            class="flex h-full border-t border-[#B0B0B0] w-[900px] max-h-22 lg:max-h-16 py-1"
           >
-            <div class="flex max-h-22 h-full gap-1 !ml-[30px] w-[600px]">
+            <div class="flex max-h-22 lg:max-h-16 h-full gap-1 !ml-[35px] w-full max-w-[840px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
                 :style="{ width: block.width + 'px' }"
-                class="relative h-20 flex items-center justify-center group"
+                class="relative h-20 lg:h-14 flex items-center justify-center group"
               >
                 <div
                   class="w-full h-full rounded-[5px]"

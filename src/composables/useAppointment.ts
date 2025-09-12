@@ -23,7 +23,6 @@ export function useAppointments() {
     weeklyAppointments.value = await fetchWeeklyAppointments(startDate, endTime)
   }
 
-
   const getDailyAppointments = async (date: Date) => {
     if (debounceTimer) clearTimeout(debounceTimer)
 
