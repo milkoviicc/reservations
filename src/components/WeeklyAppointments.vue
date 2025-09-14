@@ -171,7 +171,7 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
         <div
           v-for="day in days"
           :key="day"
-          class="flex items-center justify-center h-22 lg:h-16 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
+          class="flex items-center justify-center h-16 border-t border-r border-[#B0B0B0] font-semibold text-[#484848]"
         >
           {{ day }}
         </div>
@@ -202,14 +202,14 @@ getWeeklyAppointments(startDate.value!, endDate.value!)
           <div
             v-for="day in days"
             :key="day"
-            class="flex h-full border-t border-[#B0B0B0] w-[900px] max-h-22 lg:max-h-16 py-1"
+            class="flex h-full border-t border-[#B0B0B0] w-[900px] max-h-16 py-1"
           >
-            <div class="flex max-h-22 lg:max-h-16 h-full gap-1 !ml-[35px] w-full max-w-[840px]">
+            <div class="flex max-h-16 h-full gap-1 !ml-[35px] w-full max-w-[840px]">
               <div
                 v-for="(block, idx) in weekBlocks[day]"
                 :key="idx"
                 :style="{ width: block.width + 'px' }"
-                class="relative h-20 lg:h-14 flex items-center justify-center group"
+                class="relative h-14 flex items-center justify-center group"
               >
                 <div
                   class="w-full h-full rounded-[5px]"
