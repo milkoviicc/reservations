@@ -225,7 +225,7 @@ const dailyBlocks = computed(() => buildBlocksForAppointments(dailyAppointments.
                         >
                           <div
                             v-if="block.color === '#F54242'"
-                            class="absolute -top-6 z-50 text-xs flex flex-col items-center justify-center bg-white text-gray-800 px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                            class="absolute -top-6 z-50 text-xs flex flex-col items-center justify-center bg-white text-gray-800 px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-active:opacity-100"
                           >
                             <p>
                               {{ block.startTime.split(':')[0] }}:{{
