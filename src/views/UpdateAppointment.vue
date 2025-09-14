@@ -135,6 +135,12 @@ const callUpdateAppointment = async (e: Event) => {
               type="text"
               placeholder="Naziv termina"
               required
+              @focus="
+                (e) => {
+                  const target = e.target as HTMLInputElement | null
+                  target?.select()
+                }
+              "
               class="bg-transparent text-black outline-none w-full"
             />
           </div>
@@ -149,6 +155,12 @@ const callUpdateAppointment = async (e: Event) => {
               type="text"
               placeholder="Ime i prezime klijenta"
               required
+              @focus="
+                (e) => {
+                  const target = e.target as HTMLInputElement | null
+                  target?.select()
+                }
+              "
               class="flex-1 bg-transparent text-black outline-none w-full"
             />
           </div>
@@ -181,6 +193,12 @@ const callUpdateAppointment = async (e: Event) => {
                           min="1"
                           max="23"
                           required
+                          @focus="
+                            (e) => {
+                              const target = e.target as HTMLInputElement | null
+                              target?.select()
+                            }
+                          "
                           class="appearance-none w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                         />
                         <p class="absolute top-16 left-0 text-xs">Sati</p>
@@ -193,6 +211,12 @@ const callUpdateAppointment = async (e: Event) => {
                           v-model="startingMinutes"
                           min="0"
                           max="59"
+                          @focus="
+                            (e) => {
+                              const target = e.target as HTMLInputElement | null
+                              target?.select()
+                            }
+                          "
                           class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                         />
                         <p class="absolute top-16 left-0 text-xs">Minute</p>
@@ -206,6 +230,12 @@ const callUpdateAppointment = async (e: Event) => {
                           min="1"
                           max="23"
                           required
+                          @focus="
+                            (e) => {
+                              const target = e.target as HTMLInputElement | null
+                              target?.select()
+                            }
+                          "
                           class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                         />
                         <p class="absolute top-16 left-0 text-xs">Sati</p>
@@ -218,6 +248,12 @@ const callUpdateAppointment = async (e: Event) => {
                           placeholder="00"
                           min="0"
                           max="59"
+                          @focus="
+                            (e) => {
+                              const target = e.target as HTMLInputElement | null
+                              target?.select()
+                            }
+                          "
                           class="w-18 h-13 rounded-lg shadow-[1px_2px_4px_1px_rgba(0,0,0,0.25)] flex justify-center items-center text-3xl text-center"
                         />
                         <p class="absolute top-16 left-0 text-xs">Minute</p>
